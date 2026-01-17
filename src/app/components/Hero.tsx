@@ -2,6 +2,7 @@ import { ArrowRight, TrendingUp, Users, Award, Sparkles, Star } from "lucide-rea
 import { motion } from "motion/react";
 import { useContent } from "../context/ContentContext";
 import { useEffect, useState } from "react";
+import heroImage from "figma:asset/0ce7a2fcbe0fae7dd0be0ad116daad98b9f72050.png";
 
 // Animated counter hook
 function useCounter(end: number, duration: number = 2000) {
@@ -75,7 +76,7 @@ export function Hero() {
       <div className="absolute right-0 top-0 bottom-0 w-1/2 hidden lg:block pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white"></div>
         <img 
-          src={content.hero.backgroundImage} 
+          src={heroImage} 
           alt="Business consultation" 
           className="w-full h-full object-cover opacity-40"
         />

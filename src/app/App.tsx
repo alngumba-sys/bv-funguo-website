@@ -22,9 +22,9 @@ export default function App() {
 
   return (
     <ContentProvider>
-      <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white">
+      <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white overflow-x-hidden">
         <Header onAdminAccess={() => setIsAdminOpen(true)} />
-        <main>
+        <main className="w-full">
           <Hero />
           <ValueProposition />
           <SuccessStories />
