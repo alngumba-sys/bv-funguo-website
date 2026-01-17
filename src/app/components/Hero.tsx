@@ -1,8 +1,7 @@
-import { ArrowRight, Target, TrendingUp, Shield, Award, Users, CheckCircle2, Star, Clock, Zap, BarChart3, Building2, Sparkles } from "lucide-react";
+import { ArrowRight, TrendingUp, Users, Award, Sparkles, Star } from "lucide-react";
 import { motion } from "motion/react";
 import { useContent } from "../context/ContentContext";
 import { useEffect, useState } from "react";
-import heroImage from "figma:asset/0ce7a2fcbe0fae7dd0be0ad116daad98b9f72050.png";
 
 // Animated counter hook
 function useCounter(end: number, duration: number = 2000) {
@@ -40,39 +39,23 @@ export function Hero() {
 
   const whyChooseUs = [
     { 
-      icon: Target, 
-      title: 'Personal Approach', 
-      description: 'One-on-one attention for your unique needs',
-      detail: 'We take time to understand you and your goals',
-      color: 'from-blue-500 to-blue-600'
-    },
-    { 
       icon: TrendingUp, 
       title: 'Practical Solutions', 
       description: 'Simple, actionable financial guidance',
       detail: 'See improvements in your first month',
       color: 'from-teal-500 to-teal-600'
     },
-    { 
-      icon: Shield, 
-      title: 'Trusted Partner', 
-      description: 'Honest advice, transparent process',
-      detail: 'Growing together with our community',
-      color: 'from-blue-600 to-blue-700'
-    },
   ];
 
   const quickWins = [
-    { icon: Zap, text: 'Free initial consultation', color: 'text-orange-600' },
-    { icon: CheckCircle2, text: 'Personalized financial plan', color: 'text-teal-600' },
-    { icon: Clock, text: 'Same-day response', color: 'text-blue-600' },
-    { icon: BarChart3, text: 'Monthly check-ins', color: 'text-teal-600' },
+    { icon: Award, text: 'Free initial consultation', color: 'text-orange-600' },
+    { icon: Users, text: 'Personalized financial plan', color: 'text-teal-600' },
   ];
 
   const certifications = [
     { name: 'Licensed', icon: Award },
-    { name: 'Insured', icon: Shield },
-    { name: '3+ Years', icon: Building2 },
+    { name: 'Insured', icon: Award },
+    { name: '3+ Years', icon: Award },
   ];
 
   // Animated counters
@@ -92,7 +75,7 @@ export function Hero() {
       <div className="absolute right-0 top-0 bottom-0 w-1/2 hidden lg:block pointer-events-none">
         <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white"></div>
         <img 
-          src={heroImage} 
+          src={content.hero.backgroundImage} 
           alt="Business consultation" 
           className="w-full h-full object-cover opacity-40"
         />

@@ -1,6 +1,5 @@
 import { Menu, X, House, Info, Briefcase, ShieldCheck, Headphones } from "lucide-react";
 import { useState } from "react";
-import logo from "figma:asset/de190902b877b9cb5e297c40853ae2810cf7b509.png";
 import { useContent } from "../context/ContentContext";
 
 interface HeaderProps {
@@ -51,12 +50,12 @@ export function Header({ onAdminAccess }: HeaderProps) {
         <div className="w-full px-4 sm:px-6">
           <div className="flex justify-between items-center py-2">
             <div className="flex items-center">
-              <img 
-                src={logo} 
-                alt="BV Funguo" 
-                className="h-6 w-auto cursor-pointer" 
+              <div 
+                className="text-xl font-bold bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent cursor-pointer" 
                 onClick={handleLogoClick}
-              />
+              >
+                BV FUNGUO
+              </div>
             </div>
 
             {/* Desktop Navigation */}
