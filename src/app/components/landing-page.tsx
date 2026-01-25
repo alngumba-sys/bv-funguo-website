@@ -1,4 +1,3 @@
-import image_8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af from 'figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png';
 import { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight, CheckCircle2, TrendingUp, Users, Shield, Sparkles, ChevronDown, Star, Zap, RefreshCw, Headphones, MapPin } from 'lucide-react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
@@ -97,7 +96,7 @@ export function LandingPage() {
 
       {/* Hero Section */}
       <section 
-        className="relative pt-32 pb-20 px-2 sm:px-3 lg:px-4 overflow-hidden"
+        className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
         style={{
           background: 'linear-gradient(180deg, hsla(213, 62%, 37%, 1) 0%, hsla(203, 89%, 63%, 1) 50%, hsla(0, 0%, 88%, 1) 100%)'
         }}
@@ -107,17 +106,18 @@ export function LandingPage() {
         <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-blue-400/20 rounded-full blur-3xl" />
         
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-[rgb(255,255,255)] px-4 py-2 rounded-full text-sm font-medium leading-[0.9] border border-white/20">
-                <span>Trusted by 50+ businesses in Kenya</span>
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+            <div className="space-y-6 lg:space-y-8">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-[rgb(255,255,255)] px-4 py-2 rounded-full text-xs sm:text-sm font-medium leading-[0.9] border border-white/20">
+                <span className="hidden sm:inline">Trusted by 50+ businesses in Kenya</span>
+                <span className="sm:hidden">50+ businesses in Kenya</span>
               </div>
               
-              <h1 className="sm:text-6xl lg:text-7xl font-bold text-white leading-[0.75] text-[48px] font-[Mulish] relative z-20">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight sm:leading-[0.75] font-[Mulish] relative z-20">
                 Your financial success partner
               </h1>
               
-              <div className="grid grid-cols-2 gap-4 max-w-2xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl">
                 <div className="flex items-start gap-3">
                   <Star className="text-white flex-shrink-0 mt-0.5 fill-white" size={20} />
                   <span className="text-white text-sm font-bold">Expert financial guidance</span>
@@ -147,23 +147,23 @@ export function LandingPage() {
               </div>
 
               {/* Stats */}
-              <div className="flex items-center gap-12 pt-8 border-t border-[#E2E8F0]">
+              <div className="flex flex-wrap items-center gap-6 sm:gap-8 lg:gap-12 pt-6 lg:pt-8 border-t border-[#E2E8F0]">
                 <div>
-                  <div className="text-4xl font-bold text-[#0582DC]">50+</div>
-                  <div className="text-sm text-[#64748B] mt-1">Clients served</div>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0582DC]">50+</div>
+                  <div className="text-xs sm:text-sm text-[#64748B] mt-1">Clients served</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#0582DC]">120+</div>
-                  <div className="text-sm text-[#64748B] mt-1">Projects completed</div>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0582DC]">120+</div>
+                  <div className="text-xs sm:text-sm text-[#64748B] mt-1">Projects completed</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-bold text-[#0582DC]">3+</div>
-                  <div className="text-sm text-[#64748B] mt-1">Years experience</div>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0582DC]">3+</div>
+                  <div className="text-xs sm:text-sm text-[#64748B] mt-1">Years experience</div>
                 </div>
               </div>
             </div>
 
-            <div className="relative mt-12 lg:mt-24">
+            <div className="relative mt-8 lg:mt-24">
               {/* Background Pattern */}
               <div className="absolute inset-0 -left-[35%] -right-[15%] -top-[25%] -bottom-[25%] flex items-center justify-center">
                 <ImageWithFallback 
@@ -176,43 +176,43 @@ export function LandingPage() {
               <ImageWithFallback 
                 src={heroImage}
                 alt="Team"
-                className="rounded-2xl w-full h-auto scale-[1.3] translate-y-[0.5cm] relative z-10"
+                className="rounded-2xl w-full h-auto scale-100 sm:scale-110 lg:scale-[1.3] translate-y-0 sm:translate-y-[0.5cm] relative z-10"
               />
             </div>
           </div>
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden lg:block">
           <ChevronDown size={24} className="text-[#94A3B8]" />
         </div>
       </section>
 
       {/* Quick Contact Bar - 2cm height with #B3E4FF background */}
-      <section className="px-2 sm:px-3 lg:px-4 bg-[#B3E4FF]" style={{ height: '2cm' }}>
-        <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-8">
-          <div className="text-[rgb(2,107,162)] font-bold text-lg font-normal text-[16px]">
+      <section className="px-4 sm:px-6 lg:px-8 bg-[#B3E4FF] py-4 sm:py-0" style={{ minHeight: '2cm' }}>
+        <div className="max-w-7xl mx-auto h-full flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-8">
+          <div className="text-[rgb(2,107,162)] font-bold text-sm sm:text-base lg:text-lg text-center sm:text-left">
             Get a free consultation today!
           </div>
-          <form className="flex gap-4 items-center flex-1 max-w-4xl">
+          <form className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center w-full sm:flex-1 max-w-4xl">
             <input 
               type="text"
               placeholder="Your name"
-              className="px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] flex-1 text-[rgb(24,30,47)]"
+              className="w-full sm:flex-1 px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-[rgb(24,30,47)] text-sm"
             />
             <input 
               type="email"
               placeholder="Email address"
-              className="px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] flex-1"
+              className="w-full sm:flex-1 px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-sm"
             />
             <input 
               type="tel"
               placeholder="Phone number"
-              className="px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] flex-1"
+              className="w-full sm:flex-1 px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-sm"
             />
             <button 
               type="submit"
-              className="bg-[#133179] text-white px-[24px] py-[6px] rounded-lg font-medium hover:bg-[#0f2559] transition-colors text-[14px]"
+              className="w-full sm:w-auto bg-[#133179] text-white px-[24px] py-[6px] rounded-lg font-medium hover:bg-[#0f2559] transition-colors text-[14px] whitespace-nowrap"
             >
               Quick Contact
             </button>
@@ -629,7 +629,7 @@ export function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-2 sm:px-3 lg:px-4 bg-white relative overflow-hidden">
+      <section className="py-12 sm:py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-white relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-white opacity-10">
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl" />
@@ -637,26 +637,26 @@ export function LandingPage() {
         </div>
         
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-center justify-center gap-8">
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-12">
             {/* Left - Image */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-full sm:w-auto flex justify-center">
               <ImageWithFallback 
                 src={ctaImage}
                 alt="Financial growth"
-                className="w-[403px] h-auto"
+                className="w-[280px] sm:w-[350px] lg:w-[403px] h-auto"
               />
             </div>
 
             {/* Right - Text Content */}
-            <div className="flex flex-col">
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
               <h2 className="font-bold mb-6">
-                <span className="text-[rgb(72,70,79)] text-[74px] block mt-4">Ready to</span>
-                <span className="text-[#10b981] font-normal block text-[55px]">take control</span>
-                <span className="text-[rgb(72,70,79)] text-[37px] block">of your finances?</span>
+                <span className="text-[rgb(72,70,79)] text-[48px] sm:text-[60px] lg:text-[74px] block mt-2 sm:mt-3 lg:mt-4">Ready to</span>
+                <span className="text-[#10b981] font-normal block text-[36px] sm:text-[46px] lg:text-[55px]">take control</span>
+                <span className="text-[rgb(72,70,79)] text-[24px] sm:text-[30px] lg:text-[37px] block">of your finances?</span>
               </h2>
               <button 
                 onClick={() => scrollToSection('contact')}
-                className="inline-flex items-center gap-2 bg-[rgb(17,160,62)] text-white px-[32px] py-[8px] rounded-lg text-base font-medium hover:shadow-lg transition-all w-fit"
+                className="inline-flex items-center gap-2 bg-[rgb(17,160,62)] text-white px-[24px] sm:px-[32px] py-[8px] rounded-lg text-sm sm:text-base font-medium hover:shadow-lg transition-all w-fit"
               >
                 Get started today
                 <ArrowRight size={20} />
@@ -762,7 +762,7 @@ export function LandingPage() {
             <div className="md:col-span-2">
               <div className="mb-4">
                 <ImageWithFallback 
-                  src={image_8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af}
+                  src={logoWhite}
                   alt="BV FUNGUO Logo"
                   className="h-10 w-auto"
                 />
