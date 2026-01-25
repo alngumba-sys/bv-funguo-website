@@ -1,7 +1,7 @@
 
-  # BVFunguo
+  # BVFunguo (Copy)
 
-  This is a code bundle for BVFunguo. The original project is available at https://www.figma.com/design/JzGxC5Ip8dxbtS62mAwYqT/BVFunguo.
+  This is a code bundle for BVFunguo (Copy). The original project is available at https://www.figma.com/design/GIrbEeAFvXEwn4yE1ZwMgr/BVFunguo--Copy-.
 
   ## Running the code
 
