@@ -3,32 +3,73 @@ import { Menu, X, ArrowRight, CheckCircle2, TrendingUp, Users, Shield, Sparkles,
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhoneVolume, faCoins, faBullseye } from '@fortawesome/free-solid-svg-icons';
+import { SecretAdminModal } from '@/app/components/secret-admin-modal';
 
 // Logo and SVG imports
-import bgPattern from "@/assets/bg-pattern.svg";
-import logo from "@/assets/logo-blue.svg";
-import logoWhite from "@/assets/logo-white.svg";
-import bvLogo from "@/assets/bv-watermark.svg";
-import bvImage from "@/assets/bv-watermark.svg";
-import kenyaMap from "@/assets/kenya-map.svg";
-import bvWatermark from "@/assets/bv-watermark.svg";
-import footerLogo from "@/assets/logo-white.svg";
+import defaultBgPattern from "@/assets/bg-pattern.svg";
+import defaultLogo from "@/assets/logo-blue.svg";
+import defaultLogoWhite from "@/assets/logo-white.svg";
+import defaultBvLogo from "@/assets/bv-watermark.svg";
+import defaultBvImage from "@/assets/bv-watermark.svg";
+import defaultKenyaMap from "@/assets/kenya-map.svg";
+import defaultBvWatermark from "@/assets/bv-watermark.svg";
+import defaultFooterLogo from "@/assets/logo-white.svg";
 
-// Unsplash image URLs
-const heroTeam = "https://images.unsplash.com/photo-1720700126957-769e2f2fc0fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWxzJTIwdGVhbSUyMG1lZXRpbmclMjBLZW55YXxlbnwxfHx8fDE3Njk4ODgyMjR8MA&ixlib=rb-4.1.0&q=80&w=1080";
-const personalLady = "https://images.unsplash.com/photo-1632991727906-8386e1388975?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwd29tYW4lMjBidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMGJsdWUlMjBzdWl0fGVufDF8fHx8MTc2OTg4ODIyNHww&ixlib=rb-4.1.0&q=80&w=1080";
-const businessMan = "https://images.unsplash.com/photo-1686628178443-e54eb7e5ad0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBuYXZ5JTIwc3VpdCUyMHByb2Zlc3Npb25hbHxlbnwxfHx8fDE3Njk4ODgyMjR8MA&ixlib=rb-4.1.0&q=80&w=1080";
-const kenyaFeatures = "https://images.unsplash.com/photo-1741991109886-90e70988f27b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxLZW55YSUyME5haXJvYmklMjBza3lsaW5lJTIwY2l0eXNjYXBlfGVufDF8fHx8MTc2OTg4ODIyNXww&ixlib=rb-4.1.0&q=80&w=1080";
-const jamesMwangi = "https://images.unsplash.com/photo-1738750908048-14200459c3c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdHxlbnwxfHx8fDE3Njk4ODgyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080";
-const graceAkinyi = "https://images.unsplash.com/photo-1686628101920-990fec5e6fbc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3N3b21hbiUyMHByb2Zlc3Npb25hbCUyMGhlYWRzaG90fGVufDF8fHx8MTc2OTg4ODIyNnww&ixlib=rb-4.1.0&q=80&w=1080";
-const davidOmondi = "https://images.unsplash.com/photo-1675383094481-3e2088da943b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIweW91bmclMjBwcm9mZXNzaW9uYWwlMjBtYW8lMjBvZmZpY2lhbHxlbnwxfHx8fDE3Njk4ODgyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080";
-const ctaImage = "https://images.unsplash.com/photo-1572335882825-e7fce2f9762e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwZmluYW5jaWFsJTIwY29uc3VsdGluZyUyMGJ1c2luZXNzJTIwb2ZmaWNlfGVufDF8fHx8MTc2OTg4ODIyNnww&ixlib=rb-4.1.0&q=80&w=1080";
-const cheetahLandscape = "https://images.unsplash.com/photo-1692642943316-2b8de23f9049?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxLZW55YSUyMHdpbGRsaWZlJTIwY2hlZXRhaCUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3Njk4ODgyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080";
-const kenyaLandscape = "https://images.unsplash.com/photo-1523805009345-7448845a9e53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3Njk4ODg4MDd8MA&ixlib=rb-4.1.0&q=80&w=1080";
+// Default Unsplash image URLs
+const defaultImages = {
+  heroTeam: "https://images.unsplash.com/photo-1720700126957-769e2f2fc0fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWxzJTIwdGVhbSUyMG1lZXRpbmclMjBLZW55YXxlbnwxfHx8fDE3Njk4ODgyMjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  personalLady: "https://images.unsplash.com/photo-1632991727906-8386e1388975?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwd29tYW4lMjBidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMGJsdWUlMjBzdWl0fGVufDF8fHx8MTc2OTg4ODIyNHww&ixlib=rb-4.1.0&q=80&w=1080",
+  businessMan: "https://images.unsplash.com/photo-1686628178443-e54eb7e5ad0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBuYXZ5JTIwc3VpdCUyMHByb2Zlc3Npb25hbHxlbnwxfHx8fDE3Njk4ODgyMjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  kenyaFeatures: "https://images.unsplash.com/photo-1741991109886-90e70988f27b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxLZW55YSUyME5haXJvYmklMjBza3lsaW5lJTIwY2l0eXNjYXBlfGVufDF8fHx8MTc2OTg4ODIyNXww&ixlib=rb-4.1.0&q=80&w=1080",
+  jamesMwangi: "https://images.unsplash.com/photo-1738750908048-14200459c3c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdHxlbnwxfHx8fDE3Njk4ODgyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  graceAkinyi: "https://images.unsplash.com/photo-1686628101920-990fec5e6fbc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3N3b21hbiUyMHByb2Zlc3Npb25hbCUyMGhlYWRzaG90fGVufDF8fHx8MTc2OTg4ODIyNnww&ixlib=rb-4.1.0&q=80&w=1080",
+  davidOmondi: "https://images.unsplash.com/photo-1675383094481-3e2088da943b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIweW91bmclMjBwcm9mZXNzaW9uYWwlMjBtYW8lMjBvZmZpY2lhbHxlbnwxfHx8fDE3Njk4ODgyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  ctaImage: "https://images.unsplash.com/photo-1572335882825-e7fce2f9762e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwZmluYW5jaWFsJTIwY29uc3VsdGluZyUyMGJ1c2luZXNzJTIwb2ZmaWNlfGVufDF8fHx8MTc2OTg4ODIyNnww&ixlib=rb-4.1.0&q=80&w=1080",
+  cheetahLandscape: "https://images.unsplash.com/photo-1692642943316-2b8de23f9049?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxLZW55YSUyMHdpbGRsaWZlJTIwY2hlZXRhaCUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3Njk4ODgyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+  kenyaLandscape: "https://images.unsplash.com/photo-1523805009345-7448845a9e53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3Njk4ODg4MDd8MA&ixlib=rb-4.1.0&q=80&w=1080"
+};
 
 export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [logoClickCount, setLogoClickCount] = useState(0);
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [customImages, setCustomImages] = useState<any>({});
+
+  // Load custom images from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('bvfunguo_custom_images');
+    if (saved) {
+      setCustomImages(JSON.parse(saved));
+    }
+  }, []);
+
+  // Get image with custom override
+  const getImage = (key: string, defaultValue: string) => {
+    return customImages[key]?.url || defaultValue;
+  };
+
+  // Get logo images
+  const logo = getImage('logo', defaultLogo);
+  const logoWhite = getImage('logoWhite', defaultLogoWhite);
+  const bgPattern = getImage('bgPattern', defaultBgPattern);
+  const bvLogo = getImage('bvLogo', defaultBvLogo);
+  const bvImage = getImage('bvImage', defaultBvImage);
+  const kenyaMap = getImage('kenyaMap', defaultKenyaMap);
+  const bvWatermark = getImage('bvWatermark', defaultBvWatermark);
+  const footerLogo = getImage('footerLogo', defaultFooterLogo);
+  
+  // Get content images
+  const heroTeam = getImage('heroTeam', defaultImages.heroTeam);
+  const personalLady = getImage('personalLady', defaultImages.personalLady);
+  const businessMan = getImage('businessMan', defaultImages.businessMan);
+  const kenyaFeatures = getImage('kenyaFeatures', defaultImages.kenyaFeatures);
+  const jamesMwangi = getImage('jamesMwangi', defaultImages.jamesMwangi);
+  const graceAkinyi = getImage('graceAkinyi', defaultImages.graceAkinyi);
+  const davidOmondi = getImage('davidOmondi', defaultImages.davidOmondi);
+  const ctaImage = getImage('ctaImage', defaultImages.ctaImage);
+  const cheetahLandscape = getImage('cheetahLandscape', defaultImages.cheetahLandscape);
+  const kenyaLandscape = getImage('kenyaLandscape', defaultImages.kenyaLandscape);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,6 +79,25 @@ export function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLogoClick = () => {
+    const newCount = logoClickCount + 1;
+    setLogoClickCount(newCount);
+    
+    if (newCount === 5) {
+      setShowAdminModal(true);
+      setLogoClickCount(0);
+    }
+    
+    // Reset counter after 3 seconds of no clicks
+    setTimeout(() => setLogoClickCount(0), 3000);
+  };
+
+  const handleAdminSave = (images: any) => {
+    setCustomImages(images);
+    localStorage.setItem('bvfunguo_custom_images', JSON.stringify(images));
+    setShowAdminModal(false);
+  };
+
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
@@ -45,6 +105,14 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Secret Admin Modal */}
+      <SecretAdminModal 
+        isOpen={showAdminModal}
+        onClose={() => setShowAdminModal(false)}
+        onSave={handleAdminSave}
+        currentImages={customImages}
+      />
+
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${
         scrolled ? 'bg-white/80 backdrop-blur-xl shadow-sm' : 'bg-transparent'
@@ -55,7 +123,8 @@ export function LandingPage() {
               <ImageWithFallback 
                 src={scrolled ? logo : logoWhite}
                 alt="BV FUNGUO Logo"
-                className="h-12 w-auto"
+                className="h-12 w-auto cursor-pointer"
+                onClick={handleLogoClick}
               />
             </div>
             
