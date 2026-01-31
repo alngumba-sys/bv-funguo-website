@@ -114,6 +114,7 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
     { key: 'logoWhite', label: 'Logo (White - Top)', description: 'Logo shown at top of page' },
     { key: 'footerLogo', label: 'Footer Logo', description: 'Logo in footer' },
     { key: 'bvLogo', label: 'BV Logo', description: 'BV brand logo' },
+    { key: 'bvImage', label: 'BV Community Image', description: 'BV community image in services section' },
     { key: 'bvWatermark', label: 'BV Watermark', description: 'Background watermark' },
     { key: 'bgPattern', label: 'Background Pattern', description: 'Background pattern' },
     { key: 'kenyaMap', label: 'Kenya Map', description: 'Kenya map graphic' }
