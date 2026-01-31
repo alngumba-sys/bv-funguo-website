@@ -3,22 +3,27 @@ import { Menu, X, ArrowRight, CheckCircle2, TrendingUp, Users, Shield, Sparkles,
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhoneVolume, faCoins, faBullseye } from '@fortawesome/free-solid-svg-icons';
-import heroImage from 'figma:asset/28f1f778bbc1447d32dcbbe5b9c62fedfee51997.png';
-import bgPattern from 'figma:asset/7e24d04d9f20153ccbab44a64787ca18bdf87618.png';
-import logo from 'figma:asset/e19de9b1a3313f261c0276da257bd631603f9688.png';
-import logoWhite from 'figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png';
-import personalLady from 'figma:asset/8f3d0569c71679f821c83462402b0d85b52861f2.png';
-import businessMan from 'figma:asset/a4019af60c4f099e72846873127e05c894396c76.png';
-import bvLogo from 'figma:asset/210af9291135615983f7994acb37d288510159a6.png';
-import bvImage from 'figma:asset/6775829204a3983889fcc6ff815b7b18b797b5b5.png';
-import kenyaMap from 'figma:asset/948223ce2910e350c5059cb8723f6e3f0478107b.png';
-import kenyaLandscape from 'figma:asset/8b81638bc9488c2d19d688de6b951c15b17dcada.png';
-import kenyaFeatures from 'figma:asset/9371c240f5a918cbe034461f0a51db343e7fbd4d.png';
-import jamesMwangi from 'figma:asset/a2abbe81b8673e3c389325148680fa66a73ad90b.png';
-import graceAkinyi from 'figma:asset/ec5adec687ff53c11d19e1334af647c0f0b461dd.png';
-import davidOmondi from 'figma:asset/b2b9c671edb25c544b25a994f44bfc91c7362f7f.png';
-import footerLogo from 'figma:asset/73ab016723254abc69aaaf55d579936a0005fbc3.png';
-import ctaImage from 'figma:asset/a4cbc3539b5ec86704ed551e884c157225ae1340.png';
+
+// Image imports
+import heroImage from "figma:asset/5bddd5c44e59775fc95b324ed4b7bd354e2cec47.png";
+import bgPattern from "figma:asset/e46ea6c25c4a2f0df50d01ecf8f2ebdc36f59a8e.png";
+import logo from "figma:asset/e19de9b1a3313f261c0276da257bd631603f9688.png";
+import logoWhite from "figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png";
+import personalLady from "figma:asset/8f3d0569c71679f821c83462402b0d85b52861f2.png";
+import businessMan from "figma:asset/a4019af60c4f099e72846873127e05c894396c76.png";
+import bvLogo from "figma:asset/210af9291135615983f7994acb37d288510159a6.png";
+import bvImage from "figma:asset/6775829204a3983889fcc6ff815b7b18b797b5b5.png";
+import kenyaMap from "figma:asset/7f2a60e7ba2e58cb94e17db1e74e7c35e04def68.png";
+import kenyaLandscape from "figma:asset/cb96dd6c56daf90f86e8a66bb1e9c52d57cf3730.png";
+import kenyaFeatures from "figma:asset/ac0be4c05fac54f28b07d893d8dc2d04e69c97b0.png";
+import jamesMwangi from "figma:asset/a2abbe81b8673e3c389325148680fa66a73ad90b.png";
+import graceAkinyi from "figma:asset/ec5adec687ff53c11d19e1334af647c0f0b461dd.png";
+import davidOmondi from "figma:asset/b2b9c671edb25c544b25a994f44bfc91c7362f7f.png";
+import footerLogo from "figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png";
+import ctaImage from "figma:asset/a4cbc3539b5ec86704ed551e884c157225ae1340.png";
+import bvWatermark from "figma:asset/295a8699b074cdeab6703557b9999d62783cabf1.png";
+import cheetahLandscape from "figma:asset/8b81638bc9488c2d19d688de6b951c15b17dcada.png";
+import heroTeam from "figma:asset/28f1f778bbc1447d32dcbbe5b9c62fedfee51997.png";
 
 export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -96,7 +101,7 @@ export function LandingPage() {
 
       {/* Hero Section */}
       <section 
-        className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+        className="relative pt-30 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
         style={{
           background: 'linear-gradient(180deg, hsla(213, 62%, 37%, 1) 0%, hsla(203, 89%, 63%, 1) 50%, hsla(0, 0%, 88%, 1) 100%)'
         }}
@@ -163,20 +168,22 @@ export function LandingPage() {
               </div>
             </div>
 
-            <div className="relative mt-8 lg:mt-24">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 -left-[35%] -right-[15%] -top-[25%] -bottom-[25%] flex items-center justify-center">
+            <div className="relative mt-8 lg:mt-0 lg:absolute lg:bottom-0 lg:right-0 lg:h-full flex items-end">
+              {/* BV Watermark */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-40 pointer-events-none z-0">
                 <ImageWithFallback 
-                  src={bgPattern}
-                  alt="Background"
-                  className="w-[80%] h-auto opacity-30 drop-shadow-2xl -translate-y-[1cm]"
+                  src={bvWatermark}
+                  alt="BV Watermark"
+                  className="w-full h-full object-contain"
+                  style={{ maxWidth: 'none', transform: 'scale(0.96) translateX(-2cm)' }}
                 />
               </div>
-              {/* Hero Image */}
+              
+              {/* Hero Team Image */}
               <ImageWithFallback 
-                src={heroImage}
-                alt="Team"
-                className="rounded-2xl w-full h-auto scale-100 sm:scale-110 lg:scale-[1.3] translate-y-0 sm:translate-y-[0.5cm] relative z-10"
+                src={heroTeam}
+                alt="Professional business team"
+                className="w-full h-auto object-cover object-bottom max-w-3xl lg:max-w-none relative z-10"
               />
             </div>
           </div>
@@ -189,8 +196,8 @@ export function LandingPage() {
       </section>
 
       {/* Quick Contact Bar - 2cm height with #B3E4FF background */}
-      <section className="px-4 sm:px-6 lg:px-8 bg-[#B3E4FF] py-4 sm:py-0" style={{ minHeight: '2cm' }}>
-        <div className="max-w-7xl mx-auto h-full flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-8">
+      <section className="px-4 sm:px-6 lg:px-8 bg-[#B3E4FF]" style={{ minHeight: '2cm' }}>
+        <div className="max-w-7xl mx-auto h-full flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-8 py-6">
           <div className="text-[rgb(2,107,162)] font-bold text-sm sm:text-base lg:text-lg text-center sm:text-left">
             Get a free consultation today!
           </div>
@@ -509,7 +516,6 @@ export function LandingPage() {
 
       {/* Why Choose Us */}
       <section className="py-24 px-2 sm:px-3 lg:px-4 bg-transparent relative overflow-hidden">
-        
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             {/* Column 1 - Heading and Description */}
@@ -558,11 +564,11 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Full-width Kenya Landscape Image */}
+      {/* Full-width Cheetah Landscape Image */}
       <div className="w-full" style={{ marginTop: '-4cm' }}>
         <ImageWithFallback 
-          src={kenyaLandscape}
-          alt="Kenya Landscape"
+          src={cheetahLandscape}
+          alt="Kenya savanna landscape with cheetah"
           className="w-full h-auto object-cover"
         />
       </div>
