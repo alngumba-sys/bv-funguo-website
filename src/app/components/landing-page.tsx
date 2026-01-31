@@ -4,26 +4,27 @@ import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhoneVolume, faCoins, faBullseye } from '@fortawesome/free-solid-svg-icons';
 
-// Image imports
-import heroImage from "figma:asset/5bddd5c44e59775fc95b324ed4b7bd354e2cec47.png";
-import bgPattern from "figma:asset/e46ea6c25c4a2f0df50d01ecf8f2ebdc36f59a8e.png";
-import logo from "figma:asset/e19de9b1a3313f261c0276da257bd631603f9688.png";
-import logoWhite from "figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png";
-import personalLady from "figma:asset/8f3d0569c71679f821c83462402b0d85b52861f2.png";
-import businessMan from "figma:asset/a4019af60c4f099e72846873127e05c894396c76.png";
-import bvLogo from "figma:asset/210af9291135615983f7994acb37d288510159a6.png";
-import bvImage from "figma:asset/6775829204a3983889fcc6ff815b7b18b797b5b5.png";
-import kenyaMap from "figma:asset/7f2a60e7ba2e58cb94e17db1e74e7c35e04def68.png";
-import kenyaLandscape from "figma:asset/cb96dd6c56daf90f86e8a66bb1e9c52d57cf3730.png";
-import kenyaFeatures from "figma:asset/ac0be4c05fac54f28b07d893d8dc2d04e69c97b0.png";
-import jamesMwangi from "figma:asset/a2abbe81b8673e3c389325148680fa66a73ad90b.png";
-import graceAkinyi from "figma:asset/ec5adec687ff53c11d19e1334af647c0f0b461dd.png";
-import davidOmondi from "figma:asset/b2b9c671edb25c544b25a994f44bfc91c7362f7f.png";
-import footerLogo from "figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png";
-import ctaImage from "figma:asset/a4cbc3539b5ec86704ed551e884c157225ae1340.png";
-import bvWatermark from "figma:asset/295a8699b074cdeab6703557b9999d62783cabf1.png";
-import cheetahLandscape from "figma:asset/8b81638bc9488c2d19d688de6b951c15b17dcada.png";
-import heroTeam from "figma:asset/28f1f778bbc1447d32dcbbe5b9c62fedfee51997.png";
+// Logo and SVG imports
+import bgPattern from "@/assets/bg-pattern.svg";
+import logo from "@/assets/logo-blue.svg";
+import logoWhite from "@/assets/logo-white.svg";
+import bvLogo from "@/assets/bv-watermark.svg";
+import bvImage from "@/assets/bv-watermark.svg";
+import kenyaMap from "@/assets/kenya-map.svg";
+import bvWatermark from "@/assets/bv-watermark.svg";
+import footerLogo from "@/assets/logo-white.svg";
+
+// Unsplash image URLs
+const heroTeam = "https://images.unsplash.com/photo-1720700126957-769e2f2fc0fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWxzJTIwdGVhbSUyMG1lZXRpbmclMjBLZW55YXxlbnwxfHx8fDE3Njk4ODgyMjR8MA&ixlib=rb-4.1.0&q=80&w=1080";
+const personalLady = "https://images.unsplash.com/photo-1632991727906-8386e1388975?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwd29tYW4lMjBidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMGJsdWUlMjBzdWl0fGVufDF8fHx8MTc2OTg4ODIyNHww&ixlib=rb-4.1.0&q=80&w=1080";
+const businessMan = "https://images.unsplash.com/photo-1686628178443-e54eb7e5ad0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBuYXZ5JTIwc3VpdCUyMHByb2Zlc3Npb25hbHxlbnwxfHx8fDE3Njk4ODgyMjR8MA&ixlib=rb-4.1.0&q=80&w=1080";
+const kenyaFeatures = "https://images.unsplash.com/photo-1741991109886-90e70988f27b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxLZW55YSUyME5haXJvYmklMjBza3lsaW5lJTIwY2l0eXNjYXBlfGVufDF8fHx8MTc2OTg4ODIyNXww&ixlib=rb-4.1.0&q=80&w=1080";
+const jamesMwangi = "https://images.unsplash.com/photo-1738750908048-14200459c3c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdHxlbnwxfHx8fDE3Njk4ODgyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080";
+const graceAkinyi = "https://images.unsplash.com/photo-1686628101920-990fec5e6fbc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3N3b21hbiUyMHByb2Zlc3Npb25hbCUyMGhlYWRzaG90fGVufDF8fHx8MTc2OTg4ODIyNnww&ixlib=rb-4.1.0&q=80&w=1080";
+const davidOmondi = "https://images.unsplash.com/photo-1675383094481-3e2088da943b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIweW91bmclMjBwcm9mZXNzaW9uYWwlMjBtYW8lMjBvZmZpY2lhbHxlbnwxfHx8fDE3Njk4ODgyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080";
+const ctaImage = "https://images.unsplash.com/photo-1572335882825-e7fce2f9762e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwZmluYW5jaWFsJTIwY29uc3VsdGluZyUyMGJ1c2luZXNzJTIwb2ZmaWNlfGVufDF8fHx8MTc2OTg4ODIyNnww&ixlib=rb-4.1.0&q=80&w=1080";
+const cheetahLandscape = "https://images.unsplash.com/photo-1692642943316-2b8de23f9049?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxLZW55YSUyMHdpbGRsaWZlJTIwY2hlZXRhaCUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3Njk4ODgyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080";
+const kenyaLandscape = "https://images.unsplash.com/photo-1523805009345-7448845a9e53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3Njk4ODg4MDd8MA&ixlib=rb-4.1.0&q=80&w=1080";
 
 export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
