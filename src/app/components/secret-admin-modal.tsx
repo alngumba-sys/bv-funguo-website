@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { X, Upload, Image as ImageIcon, Save, Lock, RefreshCw } from 'lucide-react';
+import { X, Upload, Image as ImageIcon, Save, Lock, RefreshCw, Phone, Mail, MapPin } from 'lucide-react';
 
 interface SecretAdminModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (images: any) => void;
+  onSave: (data: any) => void;
   currentImages: any;
+  currentContact?: ContactInfo;
 }
 
 interface ImageConfig {
@@ -16,23 +17,37 @@ interface ImageConfig {
   maxHeight?: string;
 }
 
-export function SecretAdminModal({ isOpen, onClose, onSave, currentImages }: SecretAdminModalProps) {
+interface ContactInfo {
+  email: string;
+  phone: string;
+  location: string;
+}
+
+export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, currentContact }: SecretAdminModalProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [images, setImages] = useState<Record<string, ImageConfig>>({});
-  const [activeTab, setActiveTab] = useState<'logos' | 'content'>('logos');
+  const [contact, setContact] = useState<ContactInfo>({
+    email: 'info@bvfunguo.com',
+    phone: '+254 XXX XXX XXX',
+    location: 'Nairobi, Kenya'
+  });
+  const [activeTab, setActiveTab] = useState<'logos' | 'content' | 'contact'>('logos');
 
   const ADMIN_PASSWORD = 'BVFunguo@2026';
 
   useEffect(() => {
     if (isOpen) {
       setImages(currentImages);
+      if (currentContact) {
+        setContact(currentContact);
+      }
       setIsAuthenticated(false);
       setPassword('');
       setError('');
     }
-  }, [isOpen, currentImages]);
+  }, [isOpen, currentImages, currentContact]);
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +97,7 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages }: Sec
   };
 
   const handleSave = () => {
-    onSave(images);
+    onSave({ images, contact });
     onClose();
   };
 
@@ -211,6 +226,16 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages }: Sec
                 >
                   Content Images
                 </button>
+                <button
+                  onClick={() => setActiveTab('contact')}
+                  className={`px-4 py-3 font-medium border-b-2 transition-colors ${
+                    activeTab === 'contact'
+                      ? 'border-[#3b82f6] text-[#3b82f6]'
+                      : 'border-transparent text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Contact Information
+                </button>
               </div>
             </div>
 
@@ -319,6 +344,60 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages }: Sec
                     </div>
                   </div>
                 ))}
+                {activeTab === 'contact' && (
+                  <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">Contact Information</h3>
+                        <p className="text-sm text-gray-600">Update contact details for the site</p>
+                      </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {/* Email */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          value={contact.email}
+                          onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                          placeholder="info@bvfunguo.com"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-sm"
+                        />
+                      </div>
+
+                      {/* Phone */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone
+                        </label>
+                        <input
+                          type="text"
+                          value={contact.phone}
+                          onChange={(e) => setContact({ ...contact, phone: e.target.value })}
+                          placeholder="+254 XXX XXX XXX"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-sm"
+                        />
+                      </div>
+
+                      {/* Location */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Location
+                        </label>
+                        <input
+                          type="text"
+                          value={contact.location}
+                          onChange={(e) => setContact({ ...contact, location: e.target.value })}
+                          placeholder="Nairobi, Kenya"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -35,12 +35,19 @@ export function LandingPage() {
   const [logoClickCount, setLogoClickCount] = useState(0);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [customImages, setCustomImages] = useState<any>({});
+  const [contactInfo, setContactInfo] = useState({
+    email: 'info@bvfunguo.com',
+    phone: '+254 XXX XXX XXX',
+    location: 'Nairobi, Kenya'
+  });
 
-  // Load custom images from localStorage
+  // Load custom images and contact info from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('bvfunguo_custom_images');
+    const saved = localStorage.getItem('bvfunguo_custom_data');
     if (saved) {
-      setCustomImages(JSON.parse(saved));
+      const data = JSON.parse(saved);
+      if (data.images) setCustomImages(data.images);
+      if (data.contact) setContactInfo(data.contact);
     }
   }, []);
 
@@ -92,9 +99,10 @@ export function LandingPage() {
     setTimeout(() => setLogoClickCount(0), 3000);
   };
 
-  const handleAdminSave = (images: any) => {
-    setCustomImages(images);
-    localStorage.setItem('bvfunguo_custom_images', JSON.stringify(images));
+  const handleAdminSave = (data: any) => {
+    if (data.images) setCustomImages(data.images);
+    if (data.contact) setContactInfo(data.contact);
+    localStorage.setItem('bvfunguo_custom_data', JSON.stringify(data));
     setShowAdminModal(false);
   };
 
@@ -111,6 +119,7 @@ export function LandingPage() {
         onClose={() => setShowAdminModal(false)}
         onSave={handleAdminSave}
         currentImages={customImages}
+        currentContact={contactInfo}
       />
 
       {/* Navigation */}
@@ -764,15 +773,15 @@ export function LandingPage() {
                   <div className="space-y-6">
                     <div>
                       <div className="text-sm text-[#94A3B8] mb-1">Email</div>
-                      <div className="text-lg">info@bvfunguo.com</div>
+                      <div className="text-lg">{contactInfo.email}</div>
                     </div>
                     <div>
                       <div className="text-sm text-[#94A3B8] mb-1">Phone</div>
-                      <div className="text-lg">+254 XXX XXX XXX</div>
+                      <div className="text-lg">{contactInfo.phone}</div>
                     </div>
                     <div>
                       <div className="text-sm text-[#94A3B8] mb-1">Location</div>
-                      <div className="text-lg">Nairobi, Kenya</div>
+                      <div className="text-lg">{contactInfo.location}</div>
                     </div>
                     <div>
                       <div className="text-sm text-[#94A3B8] mb-1">Business hours</div>
@@ -858,9 +867,9 @@ export function LandingPage() {
             <div>
               <h4 className="font-bold text-[rgb(255,255,255)] mb-4">Contact</h4>
               <div className="space-y-3 text-[#64748B]">
-                <p className="text-[rgb(255,255,255)] text-[15px]">info@bvfunguo.com</p>
-                <p className="text-[rgb(255,255,255)] text-[15px]">+254 XXX XXX XXX</p>
-                <p className="text-[rgb(254,254,254)] text-[15px]">Nairobi, Kenya</p>
+                <p className="text-[rgb(255,255,255)] text-[15px]">{contactInfo.email}</p>
+                <p className="text-[rgb(255,255,255)] text-[15px]">{contactInfo.phone}</p>
+                <p className="text-[rgb(254,254,254)] text-[15px]">{contactInfo.location}</p>
               </div>
             </div>
           </div>
