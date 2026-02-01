@@ -7,6 +7,7 @@ interface SecretAdminModalProps {
   onSave: (data: any) => void;
   currentImages: any;
   currentContact?: ContactInfo;
+  currentMessages?: any[];
 }
 
 interface ImageConfig {
@@ -23,7 +24,7 @@ interface ContactInfo {
   location: string;
 }
 
-export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, currentContact }: SecretAdminModalProps) {
+export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, currentContact, currentMessages }: SecretAdminModalProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -33,7 +34,8 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
     phone: '+254 XXX XXX XXX',
     location: 'Nairobi, Kenya'
   });
-  const [activeTab, setActiveTab] = useState<'logos' | 'content' | 'contact'>('logos');
+  const [messages, setMessages] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'logos' | 'content' | 'contact' | 'messages'>('logos');
 
   const ADMIN_PASSWORD = 'BVFunguo@2026';
 
@@ -43,11 +45,14 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
       if (currentContact) {
         setContact(currentContact);
       }
+      if (currentMessages) {
+        setMessages(currentMessages);
+      }
       setIsAuthenticated(false);
       setPassword('');
       setError('');
     }
-  }, [isOpen, currentImages, currentContact]);
+  }, [isOpen, currentImages, currentContact, currentMessages]);
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,7 +102,7 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
   };
 
   const handleSave = () => {
-    onSave({ images, contact });
+    onSave({ images, contact, messages });
     onClose();
   };
 
@@ -110,11 +115,11 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
   };
 
   const logoImages = [
-    { key: 'logo', label: 'Logo (Blue - Scrolled)', description: 'Logo shown when page is scrolled' },
+    { key: 'logo', label: 'Logo (Blue - Scrolled)', description: 'Logo shown when scrolled' },
     { key: 'logoWhite', label: 'Logo (White - Top)', description: 'Logo shown at top of page' },
     { key: 'footerLogo', label: 'Footer Logo', description: 'Logo in footer' },
     { key: 'bvLogo', label: 'BV Logo', description: 'BV brand logo' },
-    { key: 'bvImage', label: 'BV Community Image', description: 'BV community image in services section' },
+    { key: 'bvImage', label: 'BV Lady', description: 'BV lady image in services section' },
     { key: 'bvWatermark', label: 'BV Watermark', description: 'Background watermark' },
     { key: 'bgPattern', label: 'Background Pattern', description: 'Background pattern' },
     { key: 'kenyaMap', label: 'Kenya Map', description: 'Kenya map graphic' }
@@ -237,13 +242,24 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
                 >
                   Contact Information
                 </button>
+                <button
+                  onClick={() => setActiveTab('messages')}
+                  className={`px-4 py-3 font-medium border-b-2 transition-colors ${
+                    activeTab === 'messages'
+                      ? 'border-[#3b82f6] text-[#3b82f6]'
+                      : 'border-transparent text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Messages
+                </button>
               </div>
             </div>
 
             {/* Content */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-280px)]">
               <div className="space-y-6">
-                {(activeTab === 'logos' ? logoImages : contentImages).map(({ key, label, description }) => (
+                {/* Logos Tab */}
+                {activeTab === 'logos' && logoImages.map(({ key, label, description }) => (
                   <div key={key} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -345,6 +361,112 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
                     </div>
                   </div>
                 ))}
+
+                {/* Content Images Tab */}
+                {activeTab === 'content' && contentImages.map(({ key, label, description }) => (
+                  <div key={key} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">{label}</h3>
+                        <p className="text-sm text-gray-600">{description}</p>
+                      </div>
+                      <button
+                        onClick={() => handleReset(key)}
+                        className="text-sm text-red-600 hover:text-red-700 flex items-center gap-1"
+                      >
+                        <RefreshCw size={14} />
+                        Reset
+                      </button>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {/* Preview */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Preview
+                        </label>
+                        <div className="bg-white rounded-lg border-2 border-dashed border-gray-300 p-4 min-h-[150px] flex items-center justify-center">
+                          {images[key]?.url ? (
+                            <img
+                              src={images[key].url}
+                              alt={label}
+                              className="max-w-full max-h-[200px] object-contain"
+                            />
+                          ) : (
+                            <div className="text-center text-gray-400">
+                              <ImageIcon size={48} className="mx-auto mb-2" />
+                              <p className="text-sm">No custom image</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Controls */}
+                      <div className="space-y-4">
+                        {/* URL Input */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Image URL
+                          </label>
+                          <input
+                            type="text"
+                            value={images[key]?.url || ''}
+                            onChange={(e) => handleImageChange(key, 'url', e.target.value)}
+                            placeholder="https://example.com/image.jpg"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-sm"
+                          />
+                        </div>
+
+                        {/* File Upload */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Or upload file (max 5MB)
+                          </label>
+                          <label className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                            <Upload size={16} />
+                            <span className="text-sm">Choose file</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleFileUpload(key, e)}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+
+                        {/* Size Controls */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Max Width
+                            </label>
+                            <input
+                              type="text"
+                              value={images[key]?.maxWidth || ''}
+                              onChange={(e) => handleImageChange(key, 'maxWidth', e.target.value)}
+                              placeholder="e.g., 500px, 100%"
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Max Height
+                            </label>
+                            <input
+                              type="text"
+                              value={images[key]?.maxHeight || ''}
+                              onChange={(e) => handleImageChange(key, 'maxHeight', e.target.value)}
+                              placeholder="e.g., 300px, auto"
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Contact Tab */}
                 {activeTab === 'contact' && (
                   <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                     <div className="flex items-start justify-between mb-4">
@@ -397,6 +519,71 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
                         />
                       </div>
                     </div>
+                  </div>
+                )}
+                {activeTab === 'messages' && (
+                  <div className="space-y-4">
+                    {messages.length === 0 ? (
+                      <div className="bg-gray-50 rounded-xl p-12 border border-gray-200 text-center">
+                        <Mail size={48} className="mx-auto mb-4 text-gray-400" />
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">No messages yet</h3>
+                        <p className="text-sm text-gray-600">Form submissions will appear here</p>
+                      </div>
+                    ) : (
+                      messages.slice().reverse().map((message) => (
+                        <div key={message.id} className="bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-[#3b82f6] transition-all">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-2 h-2 rounded-full ${message.read ? 'bg-gray-400' : 'bg-[#3b82f6]'}`} />
+                              <div>
+                                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                                  message.type === 'Quick Contact' 
+                                    ? 'bg-blue-100 text-blue-700' 
+                                    : 'bg-teal-100 text-teal-700'
+                                }`}>
+                                  {message.type}
+                                </span>
+                              </div>
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              {new Date(message.timestamp).toLocaleString('en-KE', {
+                                dateStyle: 'medium',
+                                timeStyle: 'short'
+                              })}
+                            </span>
+                          </div>
+                          
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-xs font-medium text-gray-500 mb-1">Name</label>
+                              <p className="text-sm font-medium text-gray-900">{message.name}</p>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
+                              <p className="text-sm font-medium text-gray-900">{message.email}</p>
+                            </div>
+                            {message.phone && (
+                              <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">Phone</label>
+                                <p className="text-sm font-medium text-gray-900">{message.phone}</p>
+                              </div>
+                            )}
+                            {message.serviceInterest && (
+                              <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">Service Interest</label>
+                                <p className="text-sm font-medium text-gray-900">{message.serviceInterest}</p>
+                              </div>
+                            )}
+                            {message.message && (
+                              <div className="md:col-span-2">
+                                <label className="block text-xs font-medium text-gray-500 mb-1">Message</label>
+                                <p className="text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">{message.message}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 )}
               </div>

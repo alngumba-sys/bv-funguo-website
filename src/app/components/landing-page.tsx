@@ -4,6 +4,7 @@ import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhoneVolume, faCoins, faBullseye } from '@fortawesome/free-solid-svg-icons';
 import { SecretAdminModal } from '@/app/components/secret-admin-modal';
+import { SuccessModal } from '@/app/components/success-modal';
 
 // Logo and SVG imports
 import defaultBgPattern from "@/assets/bg-pattern.svg";
@@ -40,6 +41,21 @@ export function LandingPage() {
     phone: '+254 XXX XXX XXX',
     location: 'Nairobi, Kenya'
   });
+  const [messages, setMessages] = useState<any[]>([]);
+
+  // Quick Contact Form State
+  const [quickName, setQuickName] = useState('');
+  const [quickEmail, setQuickEmail] = useState('');
+  const [quickPhone, setQuickPhone] = useState('');
+
+  // Contact Form State
+  const [contactName, setContactName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [serviceInterest, setServiceInterest] = useState('Personal finance');
+  const [contactMessage, setContactMessage] = useState('');
+
+  // Success Modal State
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Load custom images and contact info from localStorage
   useEffect(() => {
@@ -48,6 +64,7 @@ export function LandingPage() {
       const data = JSON.parse(saved);
       if (data.images) setCustomImages(data.images);
       if (data.contact) setContactInfo(data.contact);
+      if (data.messages) setMessages(data.messages);
     }
   }, []);
 
@@ -102,8 +119,92 @@ export function LandingPage() {
   const handleAdminSave = (data: any) => {
     if (data.images) setCustomImages(data.images);
     if (data.contact) setContactInfo(data.contact);
-    localStorage.setItem('bvfunguo_custom_data', JSON.stringify(data));
+    
+    // Keep existing messages when saving
+    const currentData = localStorage.getItem('bvfunguo_custom_data');
+    const existingMessages = currentData ? JSON.parse(currentData).messages || [] : [];
+    
+    localStorage.setItem('bvfunguo_custom_data', JSON.stringify({
+      ...data,
+      messages: existingMessages
+    }));
     setShowAdminModal(false);
+  };
+
+  const handleQuickContact = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!quickName || !quickEmail || !quickPhone) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    const newMessage = {
+      id: Date.now(),
+      type: 'Quick Contact',
+      name: quickName,
+      email: quickEmail,
+      phone: quickPhone,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+
+    const updatedMessages = [...messages, newMessage];
+    setMessages(updatedMessages);
+
+    // Save to localStorage
+    const currentData = localStorage.getItem('bvfunguo_custom_data');
+    const data = currentData ? JSON.parse(currentData) : {};
+    localStorage.setItem('bvfunguo_custom_data', JSON.stringify({
+      ...data,
+      messages: updatedMessages
+    }));
+
+    // Clear form
+    setQuickName('');
+    setQuickEmail('');
+    setQuickPhone('');
+    
+    setShowSuccessModal(true);
+  };
+
+  const handleContactForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!contactName || !contactEmail || !contactMessage) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    const newMessage = {
+      id: Date.now(),
+      type: 'Contact Form',
+      name: contactName,
+      email: contactEmail,
+      serviceInterest: serviceInterest,
+      message: contactMessage,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+
+    const updatedMessages = [...messages, newMessage];
+    setMessages(updatedMessages);
+
+    // Save to localStorage
+    const currentData = localStorage.getItem('bvfunguo_custom_data');
+    const data = currentData ? JSON.parse(currentData) : {};
+    localStorage.setItem('bvfunguo_custom_data', JSON.stringify({
+      ...data,
+      messages: updatedMessages
+    }));
+
+    // Clear form
+    setContactName('');
+    setContactEmail('');
+    setServiceInterest('Personal finance');
+    setContactMessage('');
+    
+    setShowSuccessModal(true);
   };
 
   const scrollToSection = (id: string) => {
@@ -120,6 +221,14 @@ export function LandingPage() {
         onSave={handleAdminSave}
         currentImages={customImages}
         currentContact={contactInfo}
+        currentMessages={messages}
+      />
+
+      {/* Success Modal */}
+      <SuccessModal 
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        message="Thank you for your message! We will get back to you soon."
       />
 
       {/* Navigation */}
@@ -280,21 +389,27 @@ export function LandingPage() {
           <div className="text-[rgb(2,107,162)] font-bold text-sm sm:text-base lg:text-lg text-center sm:text-left">
             Get a free consultation today!
           </div>
-          <form className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center w-full sm:flex-1 max-w-4xl">
+          <form className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center w-full sm:flex-1 max-w-4xl" onSubmit={handleQuickContact}>
             <input 
               type="text"
               placeholder="Your name"
               className="w-full sm:flex-1 px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-[rgb(24,30,47)] text-sm"
+              value={quickName}
+              onChange={(e) => setQuickName(e.target.value)}
             />
             <input 
               type="email"
               placeholder="Email address"
               className="w-full sm:flex-1 px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-sm"
+              value={quickEmail}
+              onChange={(e) => setQuickEmail(e.target.value)}
             />
             <input 
               type="tel"
               placeholder="Phone number"
               className="w-full sm:flex-1 px-[16px] py-[6px] rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#3b82f6] text-sm"
+              value={quickPhone}
+              onChange={(e) => setQuickPhone(e.target.value)}
             />
             <button 
               type="submit"
@@ -794,13 +909,15 @@ export function LandingPage() {
 
               {/* Contact Form */}
               <div className="p-12 px-[48px] py-[22px]">
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleContactForm}>
                   <div>
                     <label className="block text-sm font-medium text-[#0F172A] mb-2">Full name</label>
                     <input 
                       type="text" 
                       className="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
                       placeholder="John Doe"
+                      value={contactName}
+                      onChange={(e) => setContactName(e.target.value)}
                     />
                   </div>
                   <div>
@@ -809,11 +926,16 @@ export function LandingPage() {
                       type="email" 
                       className="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
                       placeholder="john@example.com"
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-[#0F172A] mb-2">Service interest</label>
-                    <select className="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent">
+                    <select className="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
+                      value={serviceInterest}
+                      onChange={(e) => setServiceInterest(e.target.value)}
+                    >
                       <option>Personal finance</option>
                       <option>Business consulting</option>
                       <option>Both</option>
@@ -825,6 +947,8 @@ export function LandingPage() {
                       className="w-full px-4 py-3 border border-[#E2E8F0] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent resize-none"
                       rows={4}
                       placeholder="Tell us about your goals..."
+                      value={contactMessage}
+                      onChange={(e) => setContactMessage(e.target.value)}
                     />
                   </div>
                   <button 
