@@ -90,15 +90,19 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
       return;
     }
 
-    // Create preview URL
-    const url = URL.createObjectURL(file);
-    setImages(prev => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        url
-      }
-    }));
+    // Convert to base64 for persistent storage
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setImages(prev => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          url: base64String
+        }
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSave = () => {

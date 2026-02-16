@@ -84,7 +84,7 @@ const defaultContent: SiteContent = {
     description: 'Personalized Financial Consulting for Individuals & Small Businesses in East Africa',
     ctaText: 'Get Started',
     secondaryCtaText: 'Learn More',
-    backgroundImage: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMGNvbnN1bHRpbmclMjBtZWV0aW5nfGVufDF8fHx8MTczNTA2NDcyNHww&ixlib=rb-4.1.0&q=80&w=1080',
+    backgroundImage: 'https://images.unsplash.com/photo-1742996111692-2d924f12a058?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3MlMjBtZWV0aW5nJTIwY29uc3VsdGluZyUyMHByb2Zlc3Npb25hbHxlbnwxfHx8fDE3NzA5NzAwNTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     stats: [
       { label: 'Years Experience', value: '3+' },
       { label: 'Happy Clients', value: '50+' },
@@ -150,8 +150,8 @@ const defaultContent: SiteContent = {
     'Ethical and professional consulting standards',
     'Long-term partnership mindset',
   ],
-  personalLoanImage1: 'https://images.unsplash.com/photo-1739289696461-76363e419fae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxibGFjayUyMG1hbiUyMGxhcHRvcCUyMHdvcmtpbmclMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzY4NjAwNjc1fDA&ixlib=rb-4.1.0&q=80&w=1080',
-  personalLoanImage2: 'https://images.unsplash.com/photo-1653669486397-b802144ae64a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3N3b21hbiUyMGNvbnN1bHRpbmclMjBwcm9mZXNzaW9uYWwlMjBtZWV0aW5nfGVufDF8fHx8MTc2ODYwMDAwNnww&ixlib=rb-4.1.0&q=80&w=1080',
+  personalLoanImage1: 'https://images.unsplash.com/photo-1739300293504-234817eead52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwd29tYW4lMjBwcm9mZXNzaW9uYWwlMjBsYXB0b3AlMjB3b3JraW5nfGVufDF8fHx8MTc3MDk3MDA1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+  personalLoanImage2: 'https://images.unsplash.com/photo-1763598461615-610264129bea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwbWFuJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWwlMjBzdWl0fGVufDF8fHx8MTc3MDk3MDA1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
   testimonials: [
     {
       id: '1',
@@ -159,7 +159,7 @@ const defaultContent: SiteContent = {
       role: 'CEO, Tech Solutions Ltd',
       content: 'BV Funguo transformed our financial planning process. Their strategic insights helped us optimize cash flow and scale our operations successfully.',
       rating: 5,
-      image: 'https://images.unsplash.com/photo-1710778044102-56a3a6b69a1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3N3b21hbiUyMGNlbyUyMHByb2Zlc3Npb25hbHxlbnwxfHx8fDE3Njg1ODY3MjR8MA&ixlib=rb-4.1.0&q=80&w=1080',
+      image: 'https://images.unsplash.com/photo-1710778044102-56a3a6b69a1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3N3b21hbiUyMGNlbyUyMHByb2Zlc3Npb25hbCUyMHBvcnRyYWl0fGVufDF8fHx8MTc3MDk3MDA1NHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     },
     {
       id: '2',
@@ -167,7 +167,7 @@ const defaultContent: SiteContent = {
       role: 'Founder, Retail Enterprises',
       content: 'Working with BV Funguo gave us the financial clarity we needed to expand into three new markets. Their profitability analysis was exceptional.',
       rating: 5,
-      image: 'https://images.unsplash.com/photo-1604783020105-a1c1a856a55d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBmb3VuZGVyJTIwcHJvZmVzc2lvbmFsfGVufDF8fHx8MTc2ODU4NjcyOXww&ixlib=rb-4.1.0&q=80&w=1080',
+      image: 'https://images.unsplash.com/photo-1671124938240-5c13cf7d5d4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBmb3VuZGVyJTIwcHJvZmVzc2lvbmFsJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzcwOTcwMDU0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     },
     {
       id: '3',
@@ -175,7 +175,7 @@ const defaultContent: SiteContent = {
       role: 'Director, Manufacturing Co.',
       content: 'BV Funguo\'s team helped us secure funding and implement financial controls that improved our bottom line by 40%. True business partners.',
       rating: 5,
-      image: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwd29tYW4lMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzM1MDY0NzI0fDA&ixlib=rb-4.1.0&q=80&w=1080',
+      image: 'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3N3b21hbiUyMGRpcmVjdG9yJTIwcHJvZmVzc2lvbmFsJTIwcG9ydHJhaXR8ZW58MXx8fHwxNzcwOTcwMDU0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
     },
   ],
   faqs: [
@@ -222,7 +222,7 @@ const defaultContent: SiteContent = {
       'Professional Excellence',
       'Long-Term Partnership Mindset',
     ],
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxidXNpbmVzcyUyMHRlYW0lMjBtZWV0aW5nfGVufDF8fHx8MTczNTA2NDcyNHww&ixlib=rb-4.1.0&q=80&w=1080',
+    image: 'https://images.unsplash.com/photo-1742996111692-2d924f12a058?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3MlMjB0ZWFtJTIwbWVldGluZyUyMG9mZmljZXxlbnwxfHx8fDE3NzA5NzAwNTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
   },
   contact: {
     title: 'Build a Stronger Financial Foundation',

@@ -1,3 +1,11 @@
+import image_a4cbc3539b5ec86704ed551e884c157225ae1340 from 'figma:asset/a4cbc3539b5ec86704ed551e884c157225ae1340.png'
+import image_4eef1cb7c997f86f621a6acbb706e02e81d59d01 from 'figma:asset/4eef1cb7c997f86f621a6acbb706e02e81d59d01.png'
+import image_e19de9b1a3313f261c0276da257bd631603f9688 from 'figma:asset/e19de9b1a3313f261c0276da257bd631603f9688.png'
+import image_67aabc4096c7431a9c0bc59506f4b62cf2f6bc51 from 'figma:asset/67aabc4096c7431a9c0bc59506f4b62cf2f6bc51.png'
+import image_7da9b8318731d2e5363584966aa0e9fc24db912e from 'figma:asset/7da9b8318731d2e5363584966aa0e9fc24db912e.png'
+import image_8f3d0569c71679f821c83462402b0d85b52861f2 from 'figma:asset/8f3d0569c71679f821c83462402b0d85b52861f2.png'
+import image_28f1f778bbc1447d32dcbbe5b9c62fedfee51997 from 'figma:asset/28f1f778bbc1447d32dcbbe5b9c62fedfee51997.png'
+import image_8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af from 'figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png'
 import { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight, CheckCircle2, TrendingUp, Users, Shield, Sparkles, ChevronDown, Star, Zap, RefreshCw, Headphones, MapPin } from 'lucide-react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
@@ -5,29 +13,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhoneVolume, faCoins, faBullseye } from '@fortawesome/free-solid-svg-icons';
 import { SecretAdminModal } from '@/app/components/secret-admin-modal';
 import { SuccessModal } from '@/app/components/success-modal';
+import { saveContactMessage, initializeDatabase, initializeStorage } from '@/lib/supabase';
 
-// Logo and SVG imports
+// Logo imports - Updated with permanent BV Funguo logos
 import defaultBgPattern from "@/assets/bg-pattern.svg";
-import defaultLogo from "@/assets/logo-blue.svg";
-import defaultLogoWhite from "@/assets/logo-white.svg";
+import defaultLogo from "figma:asset/e19de9b1a3313f261c0276da257bd631603f9688.png"; // Blue logo
+import defaultLogoWhite from "figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png"; // White logo
 import defaultBvLogo from "@/assets/bv-watermark.svg";
 import defaultBvImage from "@/assets/bv-watermark.svg";
 import defaultKenyaMap from "@/assets/kenya-map.svg";
 import defaultBvWatermark from "@/assets/bv-watermark.svg";
-import defaultFooterLogo from "@/assets/logo-white.svg";
+import defaultFooterLogo from "figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png"; // White logo for footer
 
-// Default Unsplash image URLs
+// Testimonial images - James Mwangi custom portrait
+import jamesMwangiImg from "figma:asset/16231eba725a8649d01b7b85fb0793f57aa938d0.png";
+
+// Hero image - Kenyan woman at market
+import heroTeamImg from "figma:asset/ff041cf8d62ec1967ef1a2c727ef3fa431530c80.png";
+
+// Default Unsplash image URLs - Updated with permanent defaults featuring African professionals and Kenya landscapes
 const defaultImages = {
-  heroTeam: "https://images.unsplash.com/photo-1720700126957-769e2f2fc0fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWxzJTIwdGVhbSUyMG1lZXRpbmclMjBLZW55YXxlbnwxfHx8fDE3Njk4ODgyMjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  personalLady: "https://images.unsplash.com/photo-1632991727906-8386e1388975?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwd29tYW4lMjBidXNpbmVzcyUyMHByb2Zlc3Npb25hbCUyMGJsdWUlMjBzdWl0fGVufDF8fHx8MTc2OTg4ODIyNHww&ixlib=rb-4.1.0&q=80&w=1080",
-  businessMan: "https://images.unsplash.com/photo-1686628178443-e54eb7e5ad0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBuYXZ5JTIwc3VpdCUyMHByb2Zlc3Npb25hbHxlbnwxfHx8fDE3Njk4ODgyMjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  kenyaFeatures: "https://images.unsplash.com/photo-1741991109886-90e70988f27b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxLZW55YSUyME5haXJvYmklMjBza3lsaW5lJTIwY2l0eXNjYXBlfGVufDF8fHx8MTc2OTg4ODIyNXww&ixlib=rb-4.1.0&q=80&w=1080",
-  jamesMwangi: "https://images.unsplash.com/photo-1738750908048-14200459c3c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdHxlbnwxfHx8fDE3Njk4ODgyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  graceAkinyi: "https://images.unsplash.com/photo-1686628101920-990fec5e6fbc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwYnVzaW5lc3N3b21hbiUyMHByb2Zlc3Npb25hbCUyMGhlYWRzaG90fGVufDF8fHx8MTc2OTg4ODIyNnww&ixlib=rb-4.1.0&q=80&w=1080",
-  davidOmondi: "https://images.unsplash.com/photo-1675383094481-3e2088da943b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIweW91bmclMjBwcm9mZXNzaW9uYWwlMjBtYW8lMjBvZmZpY2lhbHxlbnwxfHx8fDE3Njk4ODgyMjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  ctaImage: "https://images.unsplash.com/photo-1572335882825-e7fce2f9762e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBZnJpY2FuJTIwZmluYW5jaWFsJTIwY29uc3VsdGluZyUyMGJ1c2luZXNzJTIwb2ZmaWNlfGVufDF8fHx8MTc2OTg4ODIyNnww&ixlib=rb-4.1.0&q=80&w=1080",
-  cheetahLandscape: "https://images.unsplash.com/photo-1692642943316-2b8de23f9049?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxLZW55YSUyMHdpbGRsaWZlJTIwY2hlZXRhaCUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3Njk4ODgyMjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-  kenyaLandscape: "https://images.unsplash.com/photo-1523805009345-7448845a9e53?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3Njk4ODg4MDd8MA&ixlib=rb-4.1.0&q=80&w=1080"
+  heroTeam: heroTeamImg,
+  personalLady: "https://images.unsplash.com/photo-1686628332798-757c624c4b08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwd29tYW4lMjBidXNpbmVzcyUyMHN1aXQlMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcwOTcwMTA2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  businessMan: "https://images.unsplash.com/photo-1763598461615-610264129bea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwbWFuJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWwlMjBzdWl0fGVufDF8fHx8MTc3MDk3MDA1M3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  kenyaFeatures: "https://images.unsplash.com/photo-1741991109886-90e70988f27b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuYWlyb2JpJTIwa2VueWElMjBjaXR5c2NhcGUlMjBza3lsaW5lfGVufDF8fHx8MTc3MDk3MDEwNnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  jamesMwangi: jamesMwangiImg,
+  graceAkinyi: "https://images.unsplash.com/photo-1765648684630-ac9c15ac98d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMGFmcmljYW4lMjB3b21hbiUyMHByb2Zlc3Npb25hbCUyMHBvcnRyYWl0JTIwYnVzaW5lc3N8ZW58MXx8fHwxNzcwOTcxOTQ2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  davidOmondi: "https://images.unsplash.com/photo-1668875438804-5f472c3bf565?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3NtYW4lMjBlbnRyZXByZW5ldXIlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzA5NzE5NDd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  ctaImage: "https://images.unsplash.com/photo-1760740962486-1f358391170e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwZmluYW5jaWFsJTIwY29uc3VsdGluZyUyMG9mZmljZXxlbnwxfHx8fDE3NzA5NzAxMDd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  cheetahLandscape: "https://images.unsplash.com/photo-1740928507841-f255eda5a4c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMHdpbGRsaWZlJTIwY2hlZXRhaCUyMHNhdmFubmF8ZW58MXx8fHwxNzcwOTcwMTA3fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  kenyaLandscape: "https://images.unsplash.com/photo-1752646430580-70b266edd173?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGxhbmRzY2FwZSUyMG5hdHVyZSUyMGJlYXV0aWZ1bHxlbnwxfHx8fDE3NzA5NzAxMDd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
 };
 
 export function LandingPage() {
@@ -131,13 +146,21 @@ export function LandingPage() {
     setShowAdminModal(false);
   };
 
-  const handleQuickContact = (e: React.FormEvent) => {
+  const handleQuickContact = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!quickName || !quickEmail || !quickPhone) {
       alert('Please fill in all fields');
       return;
     }
+
+    // Save to Supabase (with localStorage fallback)
+    await saveContactMessage({
+      name: quickName,
+      email: quickEmail,
+      phone: quickPhone,
+      message: 'Quick Contact Form Submission'
+    });
 
     const newMessage = {
       id: Date.now(),
@@ -152,7 +175,7 @@ export function LandingPage() {
     const updatedMessages = [...messages, newMessage];
     setMessages(updatedMessages);
 
-    // Save to localStorage
+    // Save to localStorage as backup
     const currentData = localStorage.getItem('bvfunguo_custom_data');
     const data = currentData ? JSON.parse(currentData) : {};
     localStorage.setItem('bvfunguo_custom_data', JSON.stringify({
@@ -168,13 +191,20 @@ export function LandingPage() {
     setShowSuccessModal(true);
   };
 
-  const handleContactForm = (e: React.FormEvent) => {
+  const handleContactForm = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!contactName || !contactEmail || !contactMessage) {
       alert('Please fill in all required fields');
       return;
     }
+
+    // Save to Supabase (with localStorage fallback)
+    await saveContactMessage({
+      name: contactName,
+      email: contactEmail,
+      message: `${serviceInterest}: ${contactMessage}`
+    });
 
     const newMessage = {
       id: Date.now(),
@@ -190,7 +220,7 @@ export function LandingPage() {
     const updatedMessages = [...messages, newMessage];
     setMessages(updatedMessages);
 
-    // Save to localStorage
+    // Save to localStorage as backup
     const currentData = localStorage.getItem('bvfunguo_custom_data');
     const data = currentData ? JSON.parse(currentData) : {};
     localStorage.setItem('bvfunguo_custom_data', JSON.stringify({
@@ -239,7 +269,7 @@ export function LandingPage() {
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center">
               <ImageWithFallback 
-                src={scrolled ? logo : logoWhite}
+                src={image_8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af}
                 alt="BV FUNGUO Logo"
                 className="h-12 w-auto cursor-pointer"
                 onClick={handleLogoClick}
@@ -248,12 +278,12 @@ export function LandingPage() {
             
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center space-x-10">
-              <button onClick={() => scrollToSection('services')} className={`${scrolled ? 'text-[#3b82f6]' : 'text-[rgb(255,255,255)]'} hover:text-[#635BFF] transition-colors text-sm font-medium font-[Albert_Sans]`}>Services</button>
-              <button onClick={() => scrollToSection('how-it-works')} className={`${scrolled ? 'text-[#3b82f6]' : 'text-[rgb(255,255,255)]'} hover:text-[#635BFF] transition-colors text-sm font-medium font-[Albert_Sans]`}>How it works</button>
-              <button onClick={() => scrollToSection('testimonials')} className={`${scrolled ? 'text-[#3b82f6]' : 'text-[rgb(255,255,255)]'} hover:text-[#635BFF] transition-colors text-sm font-medium font-[Albert_Sans]`}>Testimonials</button>
+              <button onClick={() => scrollToSection('services')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] font-bold text-[#097711]`}>Services</button>
+              <button onClick={() => scrollToSection('how-it-works')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] font-bold text-[#097711]`}>How it works</button>
+              <button onClick={() => scrollToSection('testimonials')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] text-[#097711] font-bold`}>Testimonials</button>
               <button 
                 onClick={() => scrollToSection('contact')}
-                className="bg-[#133179] text-[rgb(255,255,255)] px-6 py-2.5 rounded-lg text-sm font-medium hover:shadow-lg hover:shadow-blue-500/50 transition-all"
+                className="bg-[#047857] text-[rgb(255,255,255)] px-6 py-2.5 rounded-lg text-sm font-medium hover:shadow-lg hover:shadow-green-500/50 transition-all"
               >
                 Get started
               </button>
@@ -272,12 +302,12 @@ export function LandingPage() {
           {mobileMenuOpen && (
             <div className="lg:hidden absolute top-20 left-0 w-full bg-white border-t border-gray-100 shadow-lg">
               <div className="px-4 py-6 space-y-4">
-                <button onClick={() => scrollToSection('services')} className="block w-full text-left py-3 text-[#64748B] hover:text-[#635BFF] font-medium">Services</button>
-                <button onClick={() => scrollToSection('how-it-works')} className="block w-full text-left py-3 text-[#64748B] hover:text-[#635BFF] font-medium">How it works</button>
-                <button onClick={() => scrollToSection('testimonials')} className="block w-full text-left py-3 text-[#64748B] hover:text-[#635BFF] font-medium">Testimonials</button>
+                <button onClick={() => scrollToSection('services')} className="block w-full text-left py-3 text-[#64748B] hover:text-[#059669] font-medium">Services</button>
+                <button onClick={() => scrollToSection('how-it-works')} className="block w-full text-left py-3 text-[#64748B] hover:text-[#059669] font-medium">How it works</button>
+                <button onClick={() => scrollToSection('testimonials')} className="block w-full text-left py-3 text-[#64748B] hover:text-[#059669] font-medium">Testimonials</button>
                 <button 
                   onClick={() => scrollToSection('contact')}
-                  className="block w-full bg-gradient-to-r from-[#3b82f6] to-[#635BFF] text-white px-6 py-3 rounded-lg font-medium text-center"
+                  className="block w-full bg-gradient-to-r from-[#10b981] to-[#059669] text-white px-6 py-3 rounded-lg font-medium text-center"
                 >
                   Get started
                 </button>
@@ -291,12 +321,12 @@ export function LandingPage() {
       <section 
         className="relative pt-30 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, hsla(213, 62%, 37%, 1) 0%, hsla(203, 89%, 63%, 1) 50%, hsla(0, 0%, 88%, 1) 100%)'
+          background: 'linear-gradient(180deg, hsla(160, 62%, 30%, 1) 0%, hsla(155, 75%, 42%, 1) 50%, hsla(0, 0%, 75%, 1) 100%)'
         }}
       >
         {/* Background Elements */}
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-white/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-blue-400/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-green-400/20 rounded-full blur-3xl" />
         
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
@@ -310,7 +340,7 @@ export function LandingPage() {
                 Your financial success partner
               </h1>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl relative z-50">
                 <div className="flex items-start gap-3">
                   <Star className="text-white flex-shrink-0 mt-0.5 fill-white" size={20} />
                   <span className="text-white text-sm font-bold">Expert financial guidance</span>
@@ -332,7 +362,7 @@ export function LandingPage() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <button 
                   onClick={() => scrollToSection('contact')}
-                  className="group inline-flex items-center justify-center gap-2 bg-white text-[#3b82f6] px-[22px] py-[7px] rounded-lg text-base font-medium hover:shadow-xl hover:shadow-white/30 transition-all"
+                  className="group inline-flex items-center justify-center gap-2 bg-white text-[#10b981] px-[22px] py-[7px] rounded-lg text-base font-medium hover:shadow-xl hover:shadow-white/30 transition-all"
                 >
                   Get started
                   <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -342,15 +372,15 @@ export function LandingPage() {
               {/* Stats */}
               <div className="flex flex-wrap items-center gap-6 sm:gap-8 lg:gap-12 pt-6 lg:pt-8 border-t border-[#E2E8F0]">
                 <div>
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0582DC]">50+</div>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#10b981]">50+</div>
                   <div className="text-xs sm:text-sm text-[#64748B] mt-1">Clients served</div>
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0582DC]">120+</div>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#10b981]">120+</div>
                   <div className="text-xs sm:text-sm text-[#64748B] mt-1">Projects completed</div>
                 </div>
                 <div>
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0582DC]">3+</div>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#10b981]">3+</div>
                   <div className="text-xs sm:text-sm text-[#64748B] mt-1">Years experience</div>
                 </div>
               </div>
@@ -384,9 +414,9 @@ export function LandingPage() {
       </section>
 
       {/* Quick Contact Bar - 2cm height with #B3E4FF background */}
-      <section className="px-4 sm:px-6 lg:px-8 bg-[#B3E4FF]" style={{ minHeight: '2cm' }}>
+      <section className="px-4 sm:px-6 lg:px-8 bg-[#c5fbbe]" style={{ minHeight: '2cm' }}>
         <div className="max-w-7xl mx-auto h-full flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-8 py-6">
-          <div className="text-[rgb(2,107,162)] font-bold text-sm sm:text-base lg:text-lg text-center sm:text-left">
+          <div className="text-[rgb(2,107,162)] font-bold text-sm sm:text-base lg:text-lg text-center sm:text-left text-[#166f35]">
             Get a free consultation today!
           </div>
           <form className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center w-full sm:flex-1 max-w-4xl" onSubmit={handleQuickContact}>
@@ -413,7 +443,7 @@ export function LandingPage() {
             />
             <button 
               type="submit"
-              className="w-full sm:w-auto bg-[#133179] text-white px-[24px] py-[6px] rounded-lg font-medium hover:bg-[#0f2559] transition-colors text-[14px] whitespace-nowrap"
+              className="w-full sm:w-auto bg-[#047857] text-white px-[24px] py-[6px] rounded-lg font-medium hover:bg-[#065f46] transition-colors text-[14px] whitespace-nowrap"
             >
               Quick Contact
             </button>
@@ -424,9 +454,9 @@ export function LandingPage() {
       {/* BV FUNGUO Services Showcase */}
       <section className="py-20 px-2 sm:px-3 lg:px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-12">
+          <div className="mb-12 relative z-30">
             <h2 className="text-4xl sm:text-5xl font-bold text-[#0F172A] mb-[5px] text-left text-[40px] mt-[0px] mr-[0px] ml-[0px] font-[Instrument_Sans]">
-              <span className="text-[#343434]">BV FUNGUO - </span><span className="text-[#3b82f6] font-normal">always by your side!</span>
+              <span className="text-[#343434]">BV FUNGUO - </span><span className="text-[#10b981] font-normal">always by your side!</span>
             </h2>
             <p className="text-xl text-[#64748B] text-left text-[16px] font-[Instrument_Sans]">
               We have the right financial plan for you
@@ -437,7 +467,7 @@ export function LandingPage() {
           <div className="grid lg:grid-cols-2 gap-8 mb-16">
             {/* Individual Plans Card */}
             <div className="relative bg-white rounded-3xl border-2 border-[#3b82f6] overflow-visible shadow-lg hover:shadow-2xl transition-all group">
-              <div className="absolute top-6 right-6 z-10 text-right">
+              <div className="absolute top-6 right-6 z-30 text-right">
                 <span className="inline-block bg-[#3b82f6] text-white px-4 py-1 rounded-md text-sm font-bold">
                   PERSONAL
                 </span>
@@ -451,13 +481,13 @@ export function LandingPage() {
               {/* Lady Image */}
               <div className="absolute bottom-0 left-8 z-20" style={{ height: '110%' }}>
                 <ImageWithFallback 
-                  src={personalLady}
+                  src={image_8f3d0569c71679f821c83462402b0d85b52861f2}
                   alt="Financial consultant"
                   className="h-full w-auto object-bottom"
                 />
               </div>
 
-              <div className="relative z-10 p-8 pt-24">
+              <div className="relative z-30 p-8 pt-24">
                 <h3 className="text-2xl font-bold text-[#0F172A] mb-2 text-right font-[Albert_Sans] text-[32px]">
                   Smart budgeting and<br />wealth building
                 </h3>
@@ -472,7 +502,7 @@ export function LandingPage() {
 
             {/* Business Plans Card */}
             <div className="relative bg-white rounded-3xl border-2 border-[#0D9488] overflow-visible shadow-lg hover:shadow-2xl transition-all group">
-              <div className="absolute top-6 left-6 z-10">
+              <div className="absolute top-6 left-6 z-30">
                 <span className="inline-block bg-[#0D9488] text-white px-4 py-1 rounded-md text-sm font-bold">
                   BIZ
                 </span>
@@ -486,13 +516,13 @@ export function LandingPage() {
               {/* Business Man Image */}
               <div className="absolute bottom-0 right-8 z-20" style={{ height: '110%' }}>
                 <ImageWithFallback 
-                  src={businessMan}
+                  src={image_7da9b8318731d2e5363584966aa0e9fc24db912e}
                   alt="Business consultant"
                   className="h-full w-auto object-bottom"
                 />
               </div>
 
-              <div className="relative z-10 p-8 pt-24">
+              <div className="relative z-30 p-8 pt-24">
                 <h3 className="text-2xl font-bold text-[#0F172A] mb-2 font-[Albert_Sans] text-[32px]">
                   Reliable, high-quality<br />financial guidance
                 </h3>
@@ -507,7 +537,7 @@ export function LandingPage() {
           </div>
 
           {/* Features Row */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-30">
             <div className="flex flex-col items-center text-center">
               <div className="w-14 h-14 flex items-center justify-center mb-3">
                 <Zap className="text-[#343434]" size={28} />
@@ -548,14 +578,14 @@ export function LandingPage() {
               {/* Community Logo */}
               <div className="mb-6">
                 <ImageWithFallback 
-                  src={bvLogo}
+                  src={image_e19de9b1a3313f261c0276da257bd631603f9688}
                   alt="BV Logo"
                   className="h-22 w-auto"
                 />
               </div>
               
               <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-                <span className="text-[#343434] font-[Instrument_Sans] font-normal font-bold">Financial solutions</span> <span className="text-[#3b82f6] font-normal font-[Instrument_Sans]">for everyone</span>
+                <span className="text-[#343434] font-[Instrument_Sans] font-normal font-bold">Financial solutions</span> <span className="text-[#10b981] font-normal font-[Instrument_Sans]">for everyone</span>
               </h2>
               
               {/* Community Description */}
@@ -569,7 +599,7 @@ export function LandingPage() {
             {/* Right Column - BV Image */}
             <div className="flex justify-center lg:justify-end">
               <ImageWithFallback 
-                src={bvImage}
+                src={image_67aabc4096c7431a9c0bc59506f4b62cf2f6bc51}
                 alt="BV Community"
                 className="w-full max-w-xl h-auto"
               />
@@ -579,11 +609,11 @@ export function LandingPage() {
       </section>
 
       {/* How it Works */}
-      <section id="how-it-works" className="py-24 px-2 sm:px-3 lg:px-4 bg-gradient-to-br from-[#f8fafc] to-[#e0f2fe]">
+      <section id="how-it-works" className="py-24 px-2 sm:px-3 lg:px-4 bg-gradient-to-br from-[#f0fdf4] to-[#d1fae5]">
         <div className="max-w-7xl mx-auto">
           <div className="mb-20">
             <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-              <span className="text-[#343434] font-[Instrument_Sans]">How we work</span> <span className="text-[#3b82f6] font-normal">with you</span>
+              <span className="text-[#343434] font-[Instrument_Sans]">How we work</span> <span className="text-[#10b981] font-normal">with you</span>
             </h2>
             <p className="text-xl text-[#64748B] text-[16px]">
               A simple, transparent process to get you on the path to financial success
@@ -626,11 +656,11 @@ export function LandingPage() {
                 strokeDasharray="8 6"
               />
               
-              {/* Blue dashed line - parallel and close to gray line */}
+              {/* Dark green dashed line - parallel and close to gray line */}
               <path
                 d="M 200 165 Q 450 85, 600 165 Q 750 245, 1000 165"
                 fill="none"
-                stroke="#3b82f6"
+                stroke="#047857"
                 strokeWidth="2"
                 strokeDasharray="8 6"
               />
@@ -715,7 +745,7 @@ export function LandingPage() {
             {/* Column 1 - Heading and Description */}
             <div>
               <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-                <span className="text-[#343434] font-[Instrument_Sans]">Built for the</span> <span className="text-[#3b82f6] font-normal">Kenyan market</span>
+                <span className="text-[#343434] font-[Instrument_Sans]">Built for the</span> <span className="text-[#10b981] font-normal">Kenyan market</span>
               </h2>
               <p className="text-xl text-[#64748B]">
                 We understand the unique financial landscape in Kenya and provide solutions that work in our context
@@ -761,7 +791,7 @@ export function LandingPage() {
       {/* Full-width Cheetah Landscape Image */}
       <div className="w-full" style={{ marginTop: '-4cm' }}>
         <ImageWithFallback 
-          src={cheetahLandscape}
+          src={image_4eef1cb7c997f86f621a6acbb706e02e81d59d01}
           alt="Kenya savanna landscape with cheetah"
           className="w-full h-auto object-cover"
         />
@@ -772,7 +802,7 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-20">
             <h2 className="text-4xl sm:text-5xl font-bold mb-6">
-              <span className="text-[#343434] font-[Instrument_Sans]">Trusted by</span> <span className="text-[#3b82f6] font-normal">Kenyans</span>
+              <span className="text-[#343434] font-[Instrument_Sans]">Trusted by</span> <span className="text-[#10b981] font-normal">Kenyans</span>
             </h2>
             <p className="text-xl text-[#64748B] text-[16px]">
               See what our clients have to say about working with us
@@ -841,7 +871,7 @@ export function LandingPage() {
             {/* Left - Image */}
             <div className="flex-shrink-0 w-full sm:w-auto flex justify-center">
               <ImageWithFallback 
-                src={ctaImage}
+                src={image_a4cbc3539b5ec86704ed551e884c157225ae1340}
                 alt="Financial growth"
                 className="w-[280px] sm:w-[350px] lg:w-[403px] h-auto"
               />
@@ -881,8 +911,8 @@ export function LandingPage() {
           <div className="bg-white rounded-2xl shadow-xl border border-[#E2E8F0] overflow-hidden">
             <div className="grid md:grid-cols-2">
               {/* Contact Info */}
-              <div className="bg-gradient-to-br from-[#0F172A] to-[#1e293b] p-12 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#3b82f6]/20 to-transparent rounded-full blur-3xl" />
+              <div className="bg-gradient-to-br from-[#047857] to-[#065f46] p-12 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#10b981]/20 to-transparent rounded-full blur-3xl" />
                 <div className="relative z-10">
                   <h3 className="text-2xl font-bold mb-8 font-[Instrument_Sans]">Contact information</h3>
                   <div className="space-y-6">
@@ -953,7 +983,7 @@ export function LandingPage() {
                   </div>
                   <button 
                     type="submit"
-                    className="w-full bg-[#133179] text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition-all"
+                    className="w-full bg-[#047857] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#065f46] hover:shadow-lg transition-all"
                   >
                     Send message
                   </button>
