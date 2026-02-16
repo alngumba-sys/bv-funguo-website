@@ -1,11 +1,3 @@
-import image_a4cbc3539b5ec86704ed551e884c157225ae1340 from 'figma:asset/a4cbc3539b5ec86704ed551e884c157225ae1340.png'
-import image_4eef1cb7c997f86f621a6acbb706e02e81d59d01 from 'figma:asset/4eef1cb7c997f86f621a6acbb706e02e81d59d01.png'
-import image_e19de9b1a3313f261c0276da257bd631603f9688 from 'figma:asset/e19de9b1a3313f261c0276da257bd631603f9688.png'
-import image_67aabc4096c7431a9c0bc59506f4b62cf2f6bc51 from 'figma:asset/67aabc4096c7431a9c0bc59506f4b62cf2f6bc51.png'
-import image_7da9b8318731d2e5363584966aa0e9fc24db912e from 'figma:asset/7da9b8318731d2e5363584966aa0e9fc24db912e.png'
-import image_8f3d0569c71679f821c83462402b0d85b52861f2 from 'figma:asset/8f3d0569c71679f821c83462402b0d85b52861f2.png'
-import image_28f1f778bbc1447d32dcbbe5b9c62fedfee51997 from 'figma:asset/28f1f778bbc1447d32dcbbe5b9c62fedfee51997.png'
-import image_8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af from 'figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png'
 import { useState, useEffect } from 'react';
 import { Menu, X, ArrowRight, CheckCircle2, TrendingUp, Users, Shield, Sparkles, ChevronDown, Star, Zap, RefreshCw, Headphones, MapPin } from 'lucide-react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
@@ -15,21 +7,43 @@ import { SecretAdminModal } from '@/app/components/secret-admin-modal';
 import { SuccessModal } from '@/app/components/success-modal';
 import { saveContactMessage, initializeDatabase, initializeStorage } from '@/lib/supabase';
 
-// Logo imports - Updated with permanent BV Funguo logos
+// Logo imports - Using SVG assets for logos
 import defaultBgPattern from "@/assets/bg-pattern.svg";
-import defaultLogo from "figma:asset/e19de9b1a3313f261c0276da257bd631603f9688.png"; // Blue logo
-import defaultLogoWhite from "figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png"; // White logo
 import defaultBvLogo from "@/assets/bv-watermark.svg";
 import defaultBvImage from "@/assets/bv-watermark.svg";
 import defaultKenyaMap from "@/assets/kenya-map.svg";
 import defaultBvWatermark from "@/assets/bv-watermark.svg";
-import defaultFooterLogo from "figma:asset/8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af.png"; // White logo for footer
 
-// Testimonial images - James Mwangi custom portrait
-import jamesMwangiImg from "figma:asset/16231eba725a8649d01b7b85fb0793f57aa938d0.png";
+// Placeholder logo URL - You can replace this with your actual BV FUNGUO logo via admin panel
+const defaultLogo = "https://images.unsplash.com/photo-1544914379-806667cd9489?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3MlMjBsb2dvJTIwZ3JlZW4lMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcxMjYwODM3fDA&ixlib=rb-4.1.0&q=80&w=1080"; // Placeholder - upload your logo via admin panel
+const defaultLogoWhite = "https://images.unsplash.com/photo-1544914379-806667cd9489?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3MlMjBsb2dvJTIwZ3JlZW4lMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcxMjYwODM3fDA&ixlib=rb-4.1.0&q=80&w=1080"; // Placeholder - upload your white logo via admin panel
+const defaultFooterLogo = defaultLogoWhite;
 
-// Hero image - Kenyan woman at market
-import heroTeamImg from "figma:asset/ff041cf8d62ec1967ef1a2c727ef3fa431530c80.png";
+// Profile images for testimonials
+const jamesMwangiImg = "https://images.unsplash.com/photo-1675383094481-3e2088da943b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwbWFuJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzEyNjA4Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080";
+
+// Hero section images
+const heroTeamImg = "https://images.unsplash.com/photo-1751130562241-3323a0362831?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwd29tYW4lMjBlbnRyZXByZW5ldXIlMjBtYXJrZXQlMjBrZW55YXxlbnwxfHx8fDE3NzEyNjA4Mzl8MA&ixlib=rb-4.1.0&q=80&w=1080";
+
+// Service card images
+const image_8f3d0569c71679f821c83462402b0d85b52861f2 = "https://images.unsplash.com/photo-1686628332798-757c624c4b08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwd29tYW4lMjBwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMHN1aXQlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzEyMTUzMTJ8MA&ixlib=rb-4.1.0&q=80&w=1080";
+const image_7da9b8318731d2e5363584966aa0e9fc24db912e = "https://images.unsplash.com/photo-1675383094481-3e2088da943b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwbWFuJTIwYnVzaW5lc3MlMjBwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzEyNjA4Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080";
+
+// Community/logo images
+const image_e19de9b1a3313f261c0276da257bd631603f9688 = "https://images.unsplash.com/photo-1544914379-806667cd9489?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3MlMjBsb2dvJTIwZ3JlZW4lMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcxMjYwODM3fDA&ixlib=rb-4.1.0&q=80&w=1080"; // Logo placeholder
+const image_67aabc4096c7431a9c0bc59506f4b62cf2f6bc51 = "https://images.unsplash.com/flagged/photo-1559155359-ad9116adc821?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMGNvbW11bml0eSUyMHBlb3BsZSUyMHRvZ2V0aGVyJTIwYnVzaW5lc3N8ZW58MXx8fHwxNzcxMjYwODM5fDA&ixlib=rb-4.1.0&q=80&w=1080"; // Community
+
+// Landscape images
+const image_4eef1cb7c997f86f621a6acbb706e02e81d59d01 = "https://images.unsplash.com/photo-1692642943316-2b8de23f9049?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxrZW55YSUyMHNhdmFubmElMjBsYW5kc2NhcGUlMjBjaGVldGFoJTIwd2lsZGxpZmV8ZW58MXx8fHwxNzcxMjYwODM4fDA&ixlib=rb-4.1.0&q=80&w=1080"; // Kenya wildlife landscape
+
+// CTA section image
+const image_a4cbc3539b5ec86704ed551e884c157225ae1340 = "https://images.unsplash.com/photo-1604783020105-a1c1a856a55d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwZmluYW5jaWFsJTIwZ3Jvd3RoJTIwc3VjY2VzcyUyMGJ1c2luZXNzbWFufGVufDF8fHx8MTc3MTI2MDgzOHww&ixlib=rb-4.1.0&q=80&w=1080"; // Financial growth
+
+// Navigation logo
+const image_8c9a9782f822a04113fd7bff4f68f1bc0ac7a2af = defaultLogoWhite;
+
+// Other placeholder images
+const image_28f1f778bbc1447d32dcbbe5b9c62fedfee51997 = "https://images.unsplash.com/photo-1686628332798-757c624c4b08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwd29tYW4lMjBwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMHN1aXQlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzEyMTUzMTJ8MA&ixlib=rb-4.1.0&q=80&w=1080";
 
 // Default Unsplash image URLs - Updated with permanent defaults featuring African professionals and Kenya landscapes
 const defaultImages = {
