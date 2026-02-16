@@ -121,31 +121,36 @@ export async function getContactMessages(): Promise<ContactMessage[]> {
 }
 
 // Upload image to Supabase Storage
-export async function uploadImage(file: File, path: string): Promise<string | null> {
-  const bucketName = await initializeStorage();
+export async function uploadImage(file: File, path?: string) {
+  const bucketName = 'bv-funguo-images'; // Use bucket name directly
   
   // Generate unique filename
   const fileExt = file.name.split('.').pop();
-  const fileName = `${path}-${Date.now()}.${fileExt}`;
+  const fileName = `${path || 'image'}-${Date.now()}.${fileExt}`;
   
-  const { data, error } = await supabase.storage
-    .from(bucketName)
-    .upload(fileName, file, {
-      cacheControl: '3600',
-      upsert: false,
-    });
-  
-  if (error) {
-    console.error('Error uploading image:', error);
-    return null;
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+    
+    if (error) {
+      console.error('Error uploading image:', error);
+      return { data: null, error };
+    }
+    
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(bucketName)
+      .getPublicUrl(fileName);
+    
+    return { data: { publicUrl: urlData.publicUrl }, error: null };
+  } catch (err) {
+    console.error('Error uploading image:', err);
+    return { data: null, error: err };
   }
-  
-  // Get public URL
-  const { data: publicUrl } = supabase.storage
-    .from(bucketName)
-    .getPublicUrl(fileName);
-  
-  return publicUrl.publicUrl;
 }
 
 // Delete image from Supabase Storage

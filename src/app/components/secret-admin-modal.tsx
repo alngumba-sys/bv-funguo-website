@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Upload, Image as ImageIcon, Save, Lock, RefreshCw, Phone, Mail, MapPin } from 'lucide-react';
+import { uploadImage } from '@/lib/supabase';
 
 interface SecretAdminModalProps {
   isOpen: boolean;
@@ -74,7 +75,7 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
     }));
   };
 
-  const handleFileUpload = (key: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (key: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -90,19 +91,21 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
       return;
     }
 
-    // Convert to base64 for persistent storage
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      setImages(prev => ({
-        ...prev,
-        [key]: {
-          ...prev[key],
-          url: base64String
-        }
-      }));
-    };
-    reader.readAsDataURL(file);
+    // Upload to Supabase
+    const { data, error } = await uploadImage(file);
+    if (error) {
+      alert('Error uploading image: ' + error.message);
+      return;
+    }
+
+    // Set the URL in state
+    setImages(prev => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        url: data.publicUrl
+      }
+    }));
   };
 
   const handleSave = () => {
