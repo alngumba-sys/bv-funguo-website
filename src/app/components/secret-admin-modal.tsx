@@ -146,7 +146,16 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
   };
 
   const handleSave = () => {
-    onSave({ images, contact, messages });
+    // Filter out any blob URLs before saving
+    const cleanedImages = { ...images };
+    Object.keys(cleanedImages).forEach(key => {
+      if (cleanedImages[key]?.url?.startsWith('blob:')) {
+        console.warn(`⚠️ Removing blob URL for ${key} before saving`);
+        delete cleanedImages[key];
+      }
+    });
+    
+    onSave({ images: cleanedImages, contact, messages });
     onClose();
   };
 

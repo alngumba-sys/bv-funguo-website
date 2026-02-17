@@ -93,6 +93,25 @@ export function LandingPage() {
     if (saved) {
       const data = JSON.parse(saved);
       console.log('📦 Parsed data:', data);
+      
+      // Clean up any blob URLs from data
+      let cleaned = false;
+      if (data.images) {
+        Object.keys(data.images).forEach(key => {
+          if (data.images[key]?.url?.startsWith('blob:')) {
+            console.warn(`⚠️ Removing invalid blob URL for ${key}`);
+            delete data.images[key];
+            cleaned = true;
+          }
+        });
+      }
+      
+      // Save cleaned data back to localStorage if we removed anything
+      if (cleaned) {
+        localStorage.setItem('bvfunguo_custom_data', JSON.stringify(data));
+        console.log('✅ Cleaned blob URLs from localStorage');
+      }
+      
       if (data.images) {
         console.log('🖼️ Loading images:', data.images);
         setCustomImages(data.images);
@@ -111,6 +130,10 @@ export function LandingPage() {
     const result = customUrl || defaultValue;
     if (customUrl) {
       console.log(`🖼️ Using custom image for ${key}:`, customUrl);
+      // Check if it's a blob URL (which would be invalid after page reload)
+      if (customUrl.startsWith('blob:')) {
+        console.error(`⚠️ WARNING: blob URL detected for ${key}! This will not work after page reload.`);
+      }
     }
     return result;
   };
