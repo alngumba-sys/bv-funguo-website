@@ -310,30 +310,6 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
 
             {/* Content */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-280px)]">
-              {/* Supabase Setup Notice */}
-              <div className="mb-6 bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                    ℹ️
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold text-blue-900 mb-1">Image Upload Setup</h4>
-                    <p className="text-sm text-blue-800 mb-2">
-                      To upload images, ensure your Supabase storage bucket is configured:
-                    </p>
-                    <ol className="text-xs text-blue-700 space-y-1 list-decimal list-inside">
-                      <li>Go to Supabase Dashboard → Storage</li>
-                      <li>Create bucket: <code className="bg-blue-100 px-1 rounded">bv-funguo-images</code></li>
-                      <li>Set bucket to <strong>PUBLIC</strong></li>
-                      <li>Set file size limit to 5MB</li>
-                    </ol>
-                    <p className="text-xs text-blue-700 mt-2">
-                      💡 Or paste any image URL directly into the "Image URL" field
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
               <div className="space-y-6">
                 {/* Logos Tab */}
                 {activeTab === 'logos' && logoImages.map(({ key, label, description }) => (
