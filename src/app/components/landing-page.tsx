@@ -89,17 +89,30 @@ export function LandingPage() {
   // Load custom images and contact info from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('bvfunguo_custom_data');
+    console.log('🔄 Loading from localStorage:', saved);
     if (saved) {
       const data = JSON.parse(saved);
-      if (data.images) setCustomImages(data.images);
-      if (data.contact) setContactInfo(data.contact);
+      console.log('📦 Parsed data:', data);
+      if (data.images) {
+        console.log('🖼️ Loading images:', data.images);
+        setCustomImages(data.images);
+      }
+      if (data.contact) {
+        console.log('📞 Loading contact:', data.contact);
+        setContactInfo(data.contact);
+      }
       if (data.messages) setMessages(data.messages);
     }
   }, []);
 
   // Get image with custom override
   const getImage = (key: string, defaultValue: string) => {
-    return customImages[key]?.url || defaultValue;
+    const customUrl = customImages[key]?.url;
+    const result = customUrl || defaultValue;
+    if (customUrl) {
+      console.log(`🖼️ Using custom image for ${key}:`, customUrl);
+    }
+    return result;
   };
 
   // Get logo images
@@ -146,18 +159,40 @@ export function LandingPage() {
   };
 
   const handleAdminSave = (data: any) => {
-    if (data.images) setCustomImages(data.images);
-    if (data.contact) setContactInfo(data.contact);
+    console.log('💾 Saving admin data:', data);
+    
+    if (data.images) {
+      console.log('📸 Images to save:', data.images);
+      setCustomImages(data.images);
+    }
+    if (data.contact) {
+      console.log('📞 Contact to save:', data.contact);
+      setContactInfo(data.contact);
+    }
     
     // Keep existing messages when saving
     const currentData = localStorage.getItem('bvfunguo_custom_data');
     const existingMessages = currentData ? JSON.parse(currentData).messages || [] : [];
     
-    localStorage.setItem('bvfunguo_custom_data', JSON.stringify({
-      ...data,
+    const dataToSave = {
+      images: data.images,
+      contact: data.contact,
       messages: existingMessages
-    }));
+    };
+    
+    console.log('💽 Saving to localStorage:', dataToSave);
+    localStorage.setItem('bvfunguo_custom_data', JSON.stringify(dataToSave));
+    
+    // Verify save
+    const savedData = localStorage.getItem('bvfunguo_custom_data');
+    console.log('✅ Verified saved data:', JSON.parse(savedData || '{}'));
+    
     setShowAdminModal(false);
+    
+    // Force page refresh to show updated images
+    setTimeout(() => {
+      window.location.reload();
+    }, 300);
   };
 
   const handleQuickContact = async (e: React.FormEvent) => {
@@ -292,9 +327,9 @@ export function LandingPage() {
             
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center space-x-10">
-              <button onClick={() => scrollToSection('services')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] font-bold text-[#097711]`}>Services</button>
-              <button onClick={() => scrollToSection('how-it-works')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] font-bold text-[#097711]`}>How it works</button>
-              <button onClick={() => scrollToSection('testimonials')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] text-[#097711] font-bold`}>Testimonials</button>
+              <button onClick={() => scrollToSection('services')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] font-bold text-[#1b7f28]`}>Services</button>
+              <button onClick={() => scrollToSection('how-it-works')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] font-bold text-[#1b7f28]`}>How it works</button>
+              <button onClick={() => scrollToSection('testimonials')} className={`${scrolled ? 'text-[#10b981]' : 'text-[rgb(255,255,255)]'} hover:text-[#059669] transition-colors text-sm font-medium font-[Albert_Sans] font-bold text-[#1b7f28]`}>Testimonials</button>
               <button 
                 onClick={() => scrollToSection('contact')}
                 className="bg-[#047857] text-[rgb(255,255,255)] px-6 py-2.5 rounded-lg text-sm font-medium hover:shadow-lg hover:shadow-green-500/50 transition-all"
@@ -373,7 +408,7 @@ export function LandingPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
                 <button 
                   onClick={() => scrollToSection('contact')}
                   className="group inline-flex items-center justify-center gap-2 bg-white text-[#10b981] px-[22px] py-[7px] rounded-lg text-base font-medium hover:shadow-xl hover:shadow-white/30 transition-all"
@@ -381,6 +416,7 @@ export function LandingPage() {
                   Get started
                   <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </button>
+                <span className="text-[#10b981] text-sm font-medium">or call us at {contactInfo.phone}</span>
               </div>
 
               {/* Stats */}
@@ -430,7 +466,7 @@ export function LandingPage() {
       {/* Quick Contact Bar - 2cm height with #B3E4FF background */}
       <section className="px-4 sm:px-6 lg:px-8 bg-[#c5fbbe]" style={{ minHeight: '2cm' }}>
         <div className="max-w-7xl mx-auto h-full flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-8 py-6">
-          <div className="text-[rgb(2,107,162)] font-bold text-sm sm:text-base lg:text-lg text-center sm:text-left text-[#166f35]">
+          <div className="text-[#10b981] font-bold text-sm sm:text-base lg:text-lg text-center sm:text-left">
             Get a free consultation today!
           </div>
           <form className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center w-full sm:flex-1 max-w-4xl" onSubmit={handleQuickContact}>
