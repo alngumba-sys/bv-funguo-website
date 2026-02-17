@@ -75,6 +75,7 @@ export function LandingPage() {
     location: 'Nairobi, Kenya'
   });
   const [messages, setMessages] = useState<any[]>([]);
+  const [isLoadingImages, setIsLoadingImages] = useState(true); // Add loading state to prevent image flashing
 
   // Quick Contact Form State
   const [quickName, setQuickName] = useState('');
@@ -92,68 +93,116 @@ export function LandingPage() {
 
   // Load custom images and contact info from Supabase and localStorage
   useEffect(() => {
-    // Preload critical hero images for instant display
-    const criticalImages = [defaultLogo, defaultLogoWhite, heroTeamImg];
-    preloadImages(criticalImages).catch(err => console.error('Failed to preload images:', err));
-
     const loadData = async () => {
-      // Try to load from Supabase first
-      const supabaseConfig = await loadSiteConfiguration();
+      let hasCustomImages = false;
       
-      if (supabaseConfig) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('✅ Loaded configuration from Supabase:', supabaseConfig);
-        }
-        if (supabaseConfig.images) {
-          setCustomImages(supabaseConfig.images);
-        }
-        if (supabaseConfig.contact) {
-          setContactInfo(supabaseConfig.contact);
-        }
+      try {
+        // Try to load from Supabase first
+        const supabaseConfig = await loadSiteConfiguration();
         
-        // Also sync to localStorage as backup
-        const dataToSave = {
-          images: supabaseConfig.images || {},
-          contact: supabaseConfig.contact || contactInfo,
-          messages: []
-        };
-        localStorage.setItem('bvfunguo_custom_data', JSON.stringify(dataToSave));
-      } else {
-        // Fallback to localStorage if Supabase fails
-        if (process.env.NODE_ENV === 'development') {
-          console.log('⚠️ Falling back to localStorage');
-        }
-        const saved = localStorage.getItem('bvfunguo_custom_data');
-        if (saved) {
-          const data = JSON.parse(saved);
+        if (supabaseConfig && supabaseConfig.images && Object.keys(supabaseConfig.images).length > 0) {
+          hasCustomImages = true;
           
-          // Clean up any blob URLs from data
-          let cleaned = false;
-          if (data.images) {
-            Object.keys(data.images).forEach(key => {
-              if (data.images[key]?.url?.startsWith('blob:')) {
-                if (process.env.NODE_ENV === 'development') {
-                  console.warn(`⚠️ Removing invalid blob URL for ${key}`);
-                }
-                delete data.images[key];
-                cleaned = true;
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Loaded configuration from Supabase:', supabaseConfig);
+          }
+          
+          // Preload custom images BEFORE setting state to prevent flickering
+          const imagesToPreload = Object.values(supabaseConfig.images)
+            .map((img: any) => img?.url)
+            .filter((url): url is string => !!url && !url.startsWith('blob:'));
+          
+          if (imagesToPreload.length > 0) {
+            // Wait for images to preload before showing them
+            await preloadImages(imagesToPreload).catch(err => {
+              if (process.env.NODE_ENV === 'development') {
+                console.error('Failed to preload custom images:', err);
               }
             });
           }
           
-          // Save cleaned data back to localStorage if we removed anything
-          if (cleaned) {
-            localStorage.setItem('bvfunguo_custom_data', JSON.stringify(data));
+          // Only set custom images AFTER they're preloaded
+          setCustomImages(supabaseConfig.images);
+          
+          if (supabaseConfig.contact) {
+            setContactInfo(supabaseConfig.contact);
           }
           
-          if (data.images) {
-            setCustomImages(data.images);
+          // Also sync to localStorage as backup
+          const dataToSave = {
+            images: supabaseConfig.images || {},
+            contact: supabaseConfig.contact || contactInfo,
+            messages: []
+          };
+          localStorage.setItem('bvfunguo_custom_data', JSON.stringify(dataToSave));
+        } else {
+          // Fallback to localStorage if Supabase fails
+          if (process.env.NODE_ENV === 'development') {
+            console.log('⚠️ Falling back to localStorage');
           }
-          if (data.contact) {
-            setContactInfo(data.contact);
+          const saved = localStorage.getItem('bvfunguo_custom_data');
+          if (saved) {
+            const data = JSON.parse(saved);
+            
+            // Clean up any blob URLs from data
+            let cleaned = false;
+            if (data.images) {
+              Object.keys(data.images).forEach(key => {
+                if (data.images[key]?.url?.startsWith('blob:')) {
+                  if (process.env.NODE_ENV === 'development') {
+                    console.warn(`⚠️ Removing invalid blob URL for ${key}`);
+                  }
+                  delete data.images[key];
+                  cleaned = true;
+                }
+              });
+            }
+            
+            // Save cleaned data back to localStorage if we removed anything
+            if (cleaned) {
+              localStorage.setItem('bvfunguo_custom_data', JSON.stringify(data));
+            }
+            
+            // Preload localStorage images BEFORE setting state
+            if (data.images && Object.keys(data.images).length > 0) {
+              hasCustomImages = true;
+              
+              const imagesToPreload = Object.values(data.images)
+                .map((img: any) => img?.url)
+                .filter((url): url is string => !!url && !url.startsWith('blob:'));
+              
+              if (imagesToPreload.length > 0) {
+                await preloadImages(imagesToPreload).catch(err => {
+                  if (process.env.NODE_ENV === 'development') {
+                    console.error('Failed to preload images:', err);
+                  }
+                });
+              }
+              
+              // Only set custom images AFTER they're preloaded
+              setCustomImages(data.images);
+            }
+            if (data.contact) {
+              setContactInfo(data.contact);
+            }
+            if (data.messages) setMessages(data.messages);
           }
-          if (data.messages) setMessages(data.messages);
         }
+      } catch (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error loading configuration:', error);
+        }
+      } finally {
+        // Set loading to false - if no custom images, show defaults immediately
+        setIsLoadingImages(false);
+        
+        // Preload default critical images in background (for fallback)
+        const criticalImages = [defaultLogo, defaultLogoWhite, heroTeamImg];
+        preloadImages(criticalImages).catch(err => {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Failed to preload default images:', err);
+          }
+        });
       }
       
       // Load messages from Supabase - defer to idle time
@@ -180,6 +229,13 @@ export function LandingPage() {
 
   // Get image with custom override - Memoized to prevent recalculation
   const getImage = useCallback((key: string, defaultValue: string) => {
+    // If still loading and custom images exist, return empty string to prevent flashing
+    // This prevents showing default images before custom ones load
+    if (isLoadingImages && Object.keys(customImages).length === 0) {
+      // First load - show defaults immediately to avoid blank page
+      return defaultValue;
+    }
+    
     const customUrl = customImages[key]?.url;
     const result = customUrl || defaultValue;
     if (customUrl && process.env.NODE_ENV === 'development') {
@@ -189,7 +245,7 @@ export function LandingPage() {
       }
     }
     return result;
-  }, [customImages]);
+  }, [customImages, isLoadingImages]);
 
   // Memoize image URLs to prevent recalculation on every render
   const imageUrls = useMemo(() => ({
@@ -404,7 +460,7 @@ export function LandingPage() {
               <ImageWithFallback 
                 src={scrolled ? imageUrls.logo : imageUrls.logoWhite}
                 alt="BV FUNGUO Logo"
-                className="h-12 w-auto cursor-pointer"
+                className={`h-12 w-auto cursor-pointer transition-opacity duration-300 ${isLoadingImages ? 'opacity-0' : 'opacity-100'}`}
                 onClick={handleLogoClick}
               />
             </div>
@@ -535,7 +591,8 @@ export function LandingPage() {
               <ImageWithFallback 
                 src={imageUrls.heroTeam}
                 alt="Professional business team"
-                className="w-full h-auto object-cover object-bottom max-w-3xl lg:max-w-none relative z-10"
+                className={`w-full h-auto object-cover object-bottom max-w-3xl lg:max-w-none relative z-10 transition-opacity duration-300 ${isLoadingImages ? 'opacity-0' : 'opacity-100'}`}
+                style={{ minHeight: isLoadingImages ? '400px' : 'auto' }}
               />
             </div>
           </div>
@@ -617,7 +674,7 @@ export function LandingPage() {
                 <ImageWithFallback 
                   src={imageUrls.personalLady}
                   alt="Financial consultant"
-                  className="h-full w-auto object-bottom"
+                  className={`h-full w-auto object-bottom transition-opacity duration-300 ${isLoadingImages ? 'opacity-0' : 'opacity-100'}`}
                 />
               </div>
 
@@ -652,7 +709,7 @@ export function LandingPage() {
                 <ImageWithFallback 
                   src={imageUrls.businessMan}
                   alt="Business consultant"
-                  className="h-full w-auto object-bottom"
+                  className={`h-full w-auto object-bottom transition-opacity duration-300 ${isLoadingImages ? 'opacity-0' : 'opacity-100'}`}
                 />
               </div>
 
@@ -974,7 +1031,7 @@ export function LandingPage() {
                     <ImageWithFallback 
                       src={testimonial.image}
                       alt={testimonial.name}
-                      className="w-16 h-16 rounded-full object-cover shadow-lg"
+                      className={`w-16 h-16 rounded-full object-cover shadow-lg transition-opacity duration-300 ${isLoadingImages ? 'opacity-0' : 'opacity-100'}`}
                     />
                   ) : (
                     <div className="w-16 h-16 bg-gradient-to-br from-[#3b82f6] via-[#635BFF] to-[#0D9488] rounded-full flex items-center justify-center text-white font-bold shadow-lg">
@@ -1007,7 +1064,7 @@ export function LandingPage() {
               <ImageWithFallback 
                 src={imageUrls.ctaImage}
                 alt="Financial growth"
-                className="w-[280px] sm:w-[350px] lg:w-[403px] h-auto"
+                className={`w-[280px] sm:w-[350px] lg:w-[403px] h-auto transition-opacity duration-300 ${isLoadingImages ? 'opacity-0' : 'opacity-100'}`}
               />
             </div>
 
@@ -1137,7 +1194,7 @@ export function LandingPage() {
                 <ImageWithFallback 
                   src={imageUrls.logoWhite}
                   alt="BV FUNGUO Logo"
-                  className="h-10 w-auto"
+                  className={`h-10 w-auto transition-opacity duration-300 ${isLoadingImages ? 'opacity-0' : 'opacity-100'}`}
                 />
               </div>
               <p className="text-[rgb(255,255,255)] max-w-md">
