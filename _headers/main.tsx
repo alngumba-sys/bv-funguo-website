@@ -1,0 +1,50 @@
+# Production Deployment Headers
+# Configure these in your hosting provider (Netlify, Vercel, etc.)
+
+## Cache Control Headers for Assets
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+## HTML files - shorter cache
+/*.html
+  Cache-Control: public, max-age=3600, must-revalidate
+
+## Security Headers
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+
+## Compression (if not handled by CDN)
+/*
+  Content-Encoding: gzip
+
+## CORS Headers for assets (if needed)
+/assets/*
+  Access-Control-Allow-Origin: *

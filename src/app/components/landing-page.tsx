@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, ArrowRight, CheckCircle2, TrendingUp, Users, Shield, Sparkles, ChevronDown, Star, Zap, RefreshCw, Headphones, MapPin } from 'lucide-react';
-import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhoneVolume, faCoins, faBullseye } from '@fortawesome/free-solid-svg-icons';
-import { SecretAdminModal } from '@/app/components/secret-admin-modal';
-import { SuccessModal } from '@/app/components/success-modal';
-import { saveContactMessage, initializeDatabase, initializeStorage } from '@/lib/supabase';
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import { ImageWithFallback } from './figma/ImageWithFallback';
+import { SecretAdminModal } from './secret-admin-modal';
+import { saveContactMessage, getContactMessages, saveSiteConfiguration, loadSiteConfiguration } from '@/lib/supabase';
+import { Menu, X, ArrowRight, Star, ChevronDown, Phone, Mail, MapPin, TrendingUp, Users, PieChart, CheckCircle, Shield, FileText, Calculator, Zap, RefreshCw, Headphones, PhoneCall, Coins, Target } from 'lucide-react';
+import { throttle, preloadImages, runWhenIdle } from '@/lib/performance';
 
 // Logo imports - Using SVG assets for logos
 import defaultBgPattern from "@/assets/bg-pattern.svg";
@@ -13,6 +11,31 @@ import defaultBvLogo from "@/assets/bv-watermark.svg";
 import defaultBvImage from "@/assets/bv-watermark.svg";
 import defaultKenyaMap from "@/assets/kenya-map.svg";
 import defaultBvWatermark from "@/assets/bv-watermark.svg";
+
+// Success Modal Component - Memoized to prevent re-renders
+const SuccessModal = memo(({ isOpen, onClose, message }: { isOpen: boolean; onClose: () => void; message: string }) => {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="text-center">
+          <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+            <CheckCircle className="w-10 h-10 text-green-600" />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">Success!</h3>
+          <p className="text-gray-600 mb-6">{message}</p>
+          <button
+            onClick={onClose}
+            className="bg-[#10b981] text-white px-8 py-3 rounded-lg font-medium hover:bg-[#059669] transition-colors w-full"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+});
 
 // Placeholder logo URL - You can replace this with your actual BV FUNGUO logo via admin panel
 const defaultLogo = "https://images.unsplash.com/photo-1544914379-806667cd9489?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZnJpY2FuJTIwYnVzaW5lc3MlMjBsb2dvJTIwZ3JlZW4lMjBwcm9mZXNzaW9uYWx8ZW58MXx8fHwxNzcxMjYwODM3fDA&ixlib=rb-4.1.0&q=80&w=1080"; // Placeholder - upload your logo via admin panel
@@ -67,89 +90,140 @@ export function LandingPage() {
   // Success Modal State
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Load custom images and contact info from localStorage
+  // Load custom images and contact info from Supabase and localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('bvfunguo_custom_data');
-    console.log('🔄 Loading from localStorage:', saved);
-    if (saved) {
-      const data = JSON.parse(saved);
-      console.log('📦 Parsed data:', data);
+    // Preload critical hero images for instant display
+    const criticalImages = [defaultLogo, defaultLogoWhite, heroTeamImg];
+    preloadImages(criticalImages).catch(err => console.error('Failed to preload images:', err));
+
+    const loadData = async () => {
+      // Try to load from Supabase first
+      const supabaseConfig = await loadSiteConfiguration();
       
-      // Clean up any blob URLs from data
-      let cleaned = false;
-      if (data.images) {
-        Object.keys(data.images).forEach(key => {
-          if (data.images[key]?.url?.startsWith('blob:')) {
-            console.warn(`⚠️ Removing invalid blob URL for ${key}`);
-            delete data.images[key];
-            cleaned = true;
+      if (supabaseConfig) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Loaded configuration from Supabase:', supabaseConfig);
+        }
+        if (supabaseConfig.images) {
+          setCustomImages(supabaseConfig.images);
+        }
+        if (supabaseConfig.contact) {
+          setContactInfo(supabaseConfig.contact);
+        }
+        
+        // Also sync to localStorage as backup
+        const dataToSave = {
+          images: supabaseConfig.images || {},
+          contact: supabaseConfig.contact || contactInfo,
+          messages: []
+        };
+        localStorage.setItem('bvfunguo_custom_data', JSON.stringify(dataToSave));
+      } else {
+        // Fallback to localStorage if Supabase fails
+        if (process.env.NODE_ENV === 'development') {
+          console.log('⚠️ Falling back to localStorage');
+        }
+        const saved = localStorage.getItem('bvfunguo_custom_data');
+        if (saved) {
+          const data = JSON.parse(saved);
+          
+          // Clean up any blob URLs from data
+          let cleaned = false;
+          if (data.images) {
+            Object.keys(data.images).forEach(key => {
+              if (data.images[key]?.url?.startsWith('blob:')) {
+                if (process.env.NODE_ENV === 'development') {
+                  console.warn(`⚠️ Removing invalid blob URL for ${key}`);
+                }
+                delete data.images[key];
+                cleaned = true;
+              }
+            });
           }
-        });
+          
+          // Save cleaned data back to localStorage if we removed anything
+          if (cleaned) {
+            localStorage.setItem('bvfunguo_custom_data', JSON.stringify(data));
+          }
+          
+          if (data.images) {
+            setCustomImages(data.images);
+          }
+          if (data.contact) {
+            setContactInfo(data.contact);
+          }
+          if (data.messages) setMessages(data.messages);
+        }
       }
       
-      // Save cleaned data back to localStorage if we removed anything
-      if (cleaned) {
-        localStorage.setItem('bvfunguo_custom_data', JSON.stringify(data));
-        console.log('✅ Cleaned blob URLs from localStorage');
-      }
-      
-      if (data.images) {
-        console.log('🖼️ Loading images:', data.images);
-        setCustomImages(data.images);
-      }
-      if (data.contact) {
-        console.log('📞 Loading contact:', data.contact);
-        setContactInfo(data.contact);
-      }
-      if (data.messages) setMessages(data.messages);
-    }
+      // Load messages from Supabase - defer to idle time
+      runWhenIdle(async () => {
+        const supabaseMessages = await getContactMessages();
+        if (supabaseMessages && supabaseMessages.length > 0) {
+          const formattedMessages = supabaseMessages.map(msg => ({
+            id: msg.id,
+            type: msg.message.includes('Quick Contact') ? 'Quick Contact' : 'Contact Form',
+            name: msg.name,
+            email: msg.email,
+            phone: msg.phone || '',
+            message: msg.message,
+            timestamp: msg.created_at || new Date().toISOString(),
+            read: false
+          }));
+          setMessages(formattedMessages);
+        }
+      });
+    };
+    
+    loadData();
   }, []);
 
-  // Get image with custom override
-  const getImage = (key: string, defaultValue: string) => {
+  // Get image with custom override - Memoized to prevent recalculation
+  const getImage = useCallback((key: string, defaultValue: string) => {
     const customUrl = customImages[key]?.url;
     const result = customUrl || defaultValue;
-    if (customUrl) {
-      console.log(`🖼️ Using custom image for ${key}:`, customUrl);
+    if (customUrl && process.env.NODE_ENV === 'development') {
       // Check if it's a blob URL (which would be invalid after page reload)
       if (customUrl.startsWith('blob:')) {
         console.error(`⚠️ WARNING: blob URL detected for ${key}! This will not work after page reload.`);
       }
     }
     return result;
-  };
+  }, [customImages]);
 
-  // Get logo images
-  const logo = getImage('logo', defaultLogo);
-  const logoWhite = getImage('logoWhite', defaultLogoWhite);
-  const bgPattern = getImage('bgPattern', defaultBgPattern);
-  const bvLogo = getImage('bvLogo', defaultBvLogo);
-  const bvImage = getImage('bvImage', defaultCommunityImage);
-  const kenyaMap = getImage('kenyaMap', defaultKenyaMap);
-  const bvWatermark = getImage('bvWatermark', defaultBvWatermark);
-  const footerLogo = getImage('footerLogo', defaultFooterLogo);
-  
-  // Get content images
-  const heroTeam = getImage('heroTeam', defaultImages.heroTeam);
-  const personalLady = getImage('personalLady', defaultImages.personalLady);
-  const businessMan = getImage('businessMan', defaultImages.businessMan);
-  const kenyaFeatures = getImage('kenyaFeatures', defaultImages.kenyaFeatures);
-  const jamesMwangi = getImage('jamesMwangi', defaultImages.jamesMwangi);
-  const graceAkinyi = getImage('graceAkinyi', defaultImages.graceAkinyi);
-  const davidOmondi = getImage('davidOmondi', defaultImages.davidOmondi);
-  const ctaImage = getImage('ctaImage', defaultImages.ctaImage);
-  const cheetahLandscape = getImage('cheetahLandscape', defaultImages.cheetahLandscape);
-  const kenyaLandscape = getImage('kenyaLandscape', defaultImages.kenyaLandscape);
+  // Memoize image URLs to prevent recalculation on every render
+  const imageUrls = useMemo(() => ({
+    logo: getImage('logo', defaultLogo),
+    logoWhite: getImage('logoWhite', defaultLogoWhite),
+    bgPattern: getImage('bgPattern', defaultBgPattern),
+    bvLogo: getImage('bvLogo', defaultBvLogo),
+    bvImage: getImage('bvImage', defaultCommunityImage),
+    kenyaMap: getImage('kenyaMap', defaultKenyaMap),
+    bvWatermark: getImage('bvWatermark', defaultBvWatermark),
+    footerLogo: getImage('footerLogo', defaultFooterLogo),
+    heroTeam: getImage('heroTeam', defaultImages.heroTeam),
+    personalLady: getImage('personalLady', defaultImages.personalLady),
+    businessMan: getImage('businessMan', defaultImages.businessMan),
+    kenyaFeatures: getImage('kenyaFeatures', defaultImages.kenyaFeatures),
+    jamesMwangi: getImage('jamesMwangi', defaultImages.jamesMwangi),
+    graceAkinyi: getImage('graceAkinyi', defaultImages.graceAkinyi),
+    davidOmondi: getImage('davidOmondi', defaultImages.davidOmondi),
+    ctaImage: getImage('ctaImage', defaultImages.ctaImage),
+    cheetahLandscape: getImage('cheetahLandscape', defaultImages.cheetahLandscape),
+    kenyaLandscape: getImage('kenyaLandscape', defaultImages.kenyaLandscape)
+  }), [customImages, getImage]);
 
+  // Optimized scroll handler with throttling
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = throttle(() => {
       setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
+    }, 100); // Throttle to run at most once every 100ms
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleLogoClick = () => {
+  const handleLogoClick = useCallback(() => {
     const newCount = logoClickCount + 1;
     setLogoClickCount(newCount);
     
@@ -160,18 +234,29 @@ export function LandingPage() {
     
     // Reset counter after 3 seconds of no clicks
     setTimeout(() => setLogoClickCount(0), 3000);
-  };
+  }, [logoClickCount]);
 
-  const handleAdminSave = (data: any) => {
-    console.log('💾 Saving admin data:', data);
+  const handleAdminSave = useCallback(async (data: any) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('💾 Saving admin data:', data);
+    }
     
     if (data.images) {
-      console.log('📸 Images to save:', data.images);
       setCustomImages(data.images);
     }
     if (data.contact) {
-      console.log('📞 Contact to save:', data.contact);
       setContactInfo(data.contact);
+    }
+    
+    // Save to Supabase
+    const supabaseResult = await saveSiteConfiguration({
+      images: data.images,
+      contact: data.contact
+    });
+    
+    if (supabaseResult.error) {
+      console.error('❌ Error saving to Supabase:', supabaseResult.error);
+      alert('Failed to save to database. Changes will only be saved locally.');
     }
     
     // Keep existing messages when saving
@@ -184,12 +269,7 @@ export function LandingPage() {
       messages: existingMessages
     };
     
-    console.log('💽 Saving to localStorage:', dataToSave);
     localStorage.setItem('bvfunguo_custom_data', JSON.stringify(dataToSave));
-    
-    // Verify save
-    const savedData = localStorage.getItem('bvfunguo_custom_data');
-    console.log('✅ Verified saved data:', JSON.parse(savedData || '{}'));
     
     setShowAdminModal(false);
     
@@ -197,9 +277,9 @@ export function LandingPage() {
     setTimeout(() => {
       window.location.reload();
     }, 300);
-  };
+  }, []);
 
-  const handleQuickContact = async (e: React.FormEvent) => {
+  const handleQuickContact = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!quickName || !quickEmail || !quickPhone) {
@@ -242,9 +322,9 @@ export function LandingPage() {
     setQuickPhone('');
     
     setShowSuccessModal(true);
-  };
+  }, [quickName, quickEmail, quickPhone, messages]);
 
-  const handleContactForm = async (e: React.FormEvent) => {
+  const handleContactForm = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!contactName || !contactEmail || !contactMessage) {
@@ -288,12 +368,12 @@ export function LandingPage() {
     setContactMessage('');
     
     setShowSuccessModal(true);
-  };
+  }, [contactName, contactEmail, contactMessage, serviceInterest, messages]);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -322,7 +402,7 @@ export function LandingPage() {
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center">
               <ImageWithFallback 
-                src={scrolled ? logo : logoWhite}
+                src={scrolled ? imageUrls.logo : imageUrls.logoWhite}
                 alt="BV FUNGUO Logo"
                 className="h-12 w-auto cursor-pointer"
                 onClick={handleLogoClick}
@@ -444,7 +524,7 @@ export function LandingPage() {
               {/* BV Watermark */}
               <div className="absolute inset-0 flex items-center justify-center opacity-40 pointer-events-none z-0">
                 <ImageWithFallback 
-                  src={bvWatermark}
+                  src={imageUrls.bvWatermark}
                   alt="BV Watermark"
                   className="w-full h-full object-contain"
                   style={{ maxWidth: 'none', transform: 'scale(0.96) translateX(-2cm)' }}
@@ -453,7 +533,7 @@ export function LandingPage() {
               
               {/* Hero Team Image */}
               <ImageWithFallback 
-                src={heroTeam}
+                src={imageUrls.heroTeam}
                 alt="Professional business team"
                 className="w-full h-auto object-cover object-bottom max-w-3xl lg:max-w-none relative z-10"
               />
@@ -535,7 +615,7 @@ export function LandingPage() {
               {/* Lady Image */}
               <div className="absolute bottom-0 left-8 z-20" style={{ height: '110%' }}>
                 <ImageWithFallback 
-                  src={personalLady}
+                  src={imageUrls.personalLady}
                   alt="Financial consultant"
                   className="h-full w-auto object-bottom"
                 />
@@ -570,7 +650,7 @@ export function LandingPage() {
               {/* Business Man Image */}
               <div className="absolute bottom-0 right-8 z-20" style={{ height: '110%' }}>
                 <ImageWithFallback 
-                  src={businessMan}
+                  src={imageUrls.businessMan}
                   alt="Business consultant"
                   className="h-full w-auto object-bottom"
                 />
@@ -632,7 +712,7 @@ export function LandingPage() {
               {/* Community Logo */}
               <div className="mb-6">
                 <ImageWithFallback 
-                  src={bvLogo}
+                  src={imageUrls.bvLogo}
                   alt="BV Logo"
                   className="h-22 w-auto"
                 />
@@ -653,7 +733,7 @@ export function LandingPage() {
             {/* Right Column - BV Image */}
             <div className="flex justify-center lg:justify-end">
               <ImageWithFallback 
-                src={bvImage}
+                src={imageUrls.bvImage}
                 alt="BV Community"
                 className="w-full max-w-xl h-auto"
               />
@@ -730,7 +810,7 @@ export function LandingPage() {
               />
               <foreignObject x="176" y="111" width="48" height="48">
                 <div className="flex items-center justify-center w-full h-full">
-                  <FontAwesomeIcon icon={faPhoneVolume} style={{ color: '#708090', fontSize: '24px' }} />
+                  <PhoneCall style={{ color: '#708090', width: '24px', height: '24px' }} />
                 </div>
               </foreignObject>
               
@@ -745,7 +825,7 @@ export function LandingPage() {
               />
               <foreignObject x="576" y="111" width="48" height="48">
                 <div className="flex items-center justify-center w-full h-full">
-                  <FontAwesomeIcon icon={faCoins} style={{ color: '#708090', fontSize: '24px' }} />
+                  <Coins style={{ color: '#708090', width: '24px', height: '24px' }} />
                 </div>
               </foreignObject>
               
@@ -760,7 +840,7 @@ export function LandingPage() {
               />
               <foreignObject x="976" y="111" width="48" height="48">
                 <div className="flex items-center justify-center w-full h-full">
-                  <FontAwesomeIcon icon={faBullseye} style={{ color: '#708090', fontSize: '24px' }} />
+                  <Target style={{ color: '#708090', width: '24px', height: '24px' }} />
                 </div>
               </foreignObject>
             </svg>
@@ -820,7 +900,7 @@ export function LandingPage() {
 
               <div className="flex gap-4">
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 size={32} className="text-[#0D9488]" strokeWidth={2.5} />
+                  <CheckCircle size={32} className="text-[#0D9488]" strokeWidth={2.5} />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold mb-2 text-[#0F172A] font-[Inter]">Proven track record</h3>
@@ -845,7 +925,7 @@ export function LandingPage() {
       {/* Full-width Cheetah Landscape Image */}
       <div className="w-full" style={{ marginTop: '-4cm' }}>
         <ImageWithFallback 
-          src={cheetahLandscape}
+          src={imageUrls.cheetahLandscape}
           alt="Kenya savanna landscape with cheetah"
           className="w-full h-auto object-cover"
         />
@@ -869,21 +949,21 @@ export function LandingPage() {
                 name: "James Mwangi",
                 role: "Small Business Owner",
                 content: "BV FUNGUO helped me understand my cash flow and grow my business by 40% in just one year. Their expertise is unmatched.",
-                image: jamesMwangi,
+                image: imageUrls.jamesMwangi,
                 hasImage: true
               },
               {
                 name: "Grace Akinyi",
                 role: "Young Professional",
                 content: "The personal budgeting advice I received helped me save for my first home. I couldn't have done it without their guidance.",
-                image: graceAkinyi,
+                image: imageUrls.graceAkinyi,
                 hasImage: true
               },
               {
                 name: "David Omondi",
                 role: "Entrepreneur",
                 content: "The business plan they helped me create secured funding from investors. They truly understand what it takes to succeed.",
-                image: davidOmondi,
+                image: imageUrls.davidOmondi,
                 hasImage: true
               }
             ].map((testimonial, index) => (
@@ -925,7 +1005,7 @@ export function LandingPage() {
             {/* Left - Image */}
             <div className="flex-shrink-0 w-full sm:w-auto flex justify-center">
               <ImageWithFallback 
-                src={ctaImage}
+                src={imageUrls.ctaImage}
                 alt="Financial growth"
                 className="w-[280px] sm:w-[350px] lg:w-[403px] h-auto"
               />
@@ -1055,7 +1135,7 @@ export function LandingPage() {
             <div className="md:col-span-2">
               <div className="mb-4">
                 <ImageWithFallback 
-                  src={logoWhite}
+                  src={imageUrls.logoWhite}
                   alt="BV FUNGUO Logo"
                   className="h-10 w-auto"
                 />
