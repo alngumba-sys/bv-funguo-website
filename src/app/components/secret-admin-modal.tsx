@@ -91,21 +91,58 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
       return;
     }
 
-    // Upload to Supabase
-    const { data, error } = await uploadImage(file);
-    if (error) {
-      alert('Error uploading image: ' + error.message);
-      return;
-    }
-
-    // Set the URL in state
+    // Show loading state
+    const loadingText = 'Uploading...';
     setImages(prev => ({
       ...prev,
       [key]: {
         ...prev[key],
-        url: data.publicUrl
+        url: loadingText
       }
     }));
+
+    try {
+      // Upload to Supabase
+      const result = await uploadImage(file, key);
+      
+      if (result.error || !result.data) {
+        console.error('Upload error:', result.error);
+        alert('Error uploading image. Please check that:\n1. Your Supabase storage bucket "bv-funguo-images" exists\n2. The bucket is set to PUBLIC\n3. You have an active internet connection');
+        
+        // Clear loading state
+        setImages(prev => {
+          const newImages = { ...prev };
+          if (newImages[key]?.url === loadingText) {
+            delete newImages[key];
+          }
+          return newImages;
+        });
+        return;
+      }
+
+      // Set the URL in state
+      setImages(prev => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          url: result.data.publicUrl
+        }
+      }));
+      
+      console.log('Image uploaded successfully:', result.data.publicUrl);
+    } catch (err) {
+      console.error('Upload exception:', err);
+      alert('Failed to upload image. Please try again.');
+      
+      // Clear loading state
+      setImages(prev => {
+        const newImages = { ...prev };
+        if (newImages[key]?.url === loadingText) {
+          delete newImages[key];
+        }
+        return newImages;
+      });
+    }
   };
 
   const handleSave = () => {
@@ -264,6 +301,30 @@ export function SecretAdminModal({ isOpen, onClose, onSave, currentImages, curre
 
             {/* Content */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-280px)]">
+              {/* Supabase Setup Notice */}
+              <div className="mb-6 bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                    ℹ️
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-blue-900 mb-1">Image Upload Setup</h4>
+                    <p className="text-sm text-blue-800 mb-2">
+                      To upload images, ensure your Supabase storage bucket is configured:
+                    </p>
+                    <ol className="text-xs text-blue-700 space-y-1 list-decimal list-inside">
+                      <li>Go to Supabase Dashboard → Storage</li>
+                      <li>Create bucket: <code className="bg-blue-100 px-1 rounded">bv-funguo-images</code></li>
+                      <li>Set bucket to <strong>PUBLIC</strong></li>
+                      <li>Set file size limit to 5MB</li>
+                    </ol>
+                    <p className="text-xs text-blue-700 mt-2">
+                      💡 Or paste any image URL directly into the "Image URL" field
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
               <div className="space-y-6">
                 {/* Logos Tab */}
                 {activeTab === 'logos' && logoImages.map(({ key, label, description }) => (
